@@ -1,0 +1,16 @@
+{
+  "name": "Sparkling Gyan Content Studio",
+  "short_name": "Spark Studio",
+  "description": "Elite AI Research & Content Studio",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1021",
+  "theme_color": "#0B1021",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1164/1164954.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
