@@ -13,7 +13,7 @@ security = HTTPBearer()
 # 🔐 SECRETS CONFIGURATION
 # ==========================================
 # 1. Backend URL (Private HF Space)
-BACKEND_URL = os.getenv("BACKEND_URL", "https://diwash-barla-ss-b.hf.space")
+BACKEND_URL = os.getenv("BACKEND_URL", "https://diwash-barla-spark-search.hf.space")
 
 # 2. HF Token: Used by THIS frontend to securely talk to the backend. 
 # DO NOT share this. It stays hidden in the environment.
