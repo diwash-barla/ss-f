@@ -2,12 +2,21 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 import httpx
 import os
+from fastapi.responses import FileResponse
 
 app = FastAPI(title="Sparkling Gyan Frontend")
 templates = Jinja2Templates(directory="templates")
 
 BACKEND_URL = os.getenv("BACKEND_URL", "https://diwash-barla-spark-backend.hf.space")
 HF_TOKEN = os.getenv("API_SECRET_TOKEN", "sparkling_secret_123")
+
+@app.get("/manifest.json")
+async def get_manifest():
+    return FileResponse("manifest.json")
+
+@app.get("/service-worker.js")
+async def get_sw():
+    return FileResponse("service-worker.js")
 
 @app.get("/")
 async def read_root(request: Request):
