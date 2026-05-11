@@ -2,169 +2,381 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sparkling Gyan Content Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spark Search Studio</title>
+    
+    <!-- ⚡ PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0B1021">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1164/1164954.png">
+
     <style>
-        body {
-            background-color: #0B1021;
-            color: #E2E8F0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+        /* ==========================================
+           1. CSS Variables (Midnight Blue & Golden)
+        ========================================== */
+        :root {
+            --bg-deep: #0B1021;          /* Midnight Blue */
+            --bg-surface: rgba(22, 27, 46, 0.85); /* Slightly lighter blue */
+            --bg-card: #161B2E;          /* Card Background */
+            --bg-card-hover: #1E253C;
+            --accent: #FFD700;           /* Golden */
+            --accent-dim: rgba(255, 215, 0, 0.15); /* Golden Glow */
+            --text-primary: #E2E8F0;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --border-color: #334155;
+            --danger: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --nav-width: 250px;
+            --transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .container {
-            background-color: #161B2E;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            width: 90%;
-            max-width: 800px;
-            margin-top: 3rem;
-        }
-        h1 {
-            color: #FFD700;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 2rem;
-        }
-        input[type="text"] {
-            flex-grow: 1;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #2D3748;
-            background-color: #1A202C;
-            color: white;
-            outline: none;
-        }
-        input[type="text"]:focus {
-            border-color: #FFD700;
-        }
-        button {
-            background-color: #FFD700;
-            color: #0B1021;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #E6C200;
-        }
-        #results {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        .result-item {
-            border-bottom: 1px solid #2D3748;
-            padding-bottom: 1rem;
-        }
-        .result-title {
-            font-size: 1.2rem;
-            color: #FFD700;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        .result-title:hover {
-            text-decoration: underline;
-        }
-        .result-snippet {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: #CBD5E0;
-        }
-        .result-url {
-            font-size: 0.8rem;
-            color: #718096;
-            word-break: break-all;
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-deep); color: var(--text-primary); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* ==========================================
+           2. Mobile Header & Sidebar
+        ========================================== */
+        #mobile-header { display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 16px 20px; border-bottom: 1px solid var(--border-color); z-index: 20; }
+        .menu-btn { background: none; border: none; color: var(--text-primary); cursor: pointer; transition: var(--transition-fast); }
+        .menu-btn:active { transform: scale(0.9); }
+        .menu-btn svg { width: 26px; height: 26px; fill: currentColor; }
+        .mobile-brand { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
+        .mobile-brand span { color: var(--accent); }
+        
+        #sidebar { position: fixed; top: 0; left: -100%; width: var(--nav-width); height: 100vh; background-color: #101524; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; z-index: 1000; transition: var(--transition-fast); box-shadow: 5px 0 25px rgba(0,0,0,0.5); }
+        #sidebar.open { left: 0; }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 999; display: none; opacity: 0; transition: var(--transition-fast); }
+        .sidebar-overlay.open { display: block; opacity: 1; }
+        
+        .brand { padding: 0 24px 24px 24px; font-size: 1.3rem; font-weight: 700; color: var(--text-primary); border-bottom: 1px solid var(--border-color); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+        .brand span { color: var(--accent); }
+        .close-sidebar { background: none; border: none; color: var(--text-secondary); cursor: pointer; display: block; transition: var(--transition-fast); }
+        .nav-item { padding: 14px 24px; display: flex; align-items: center; gap: 14px; color: var(--text-secondary); text-decoration: none; cursor: pointer; transition: var(--transition-fast); font-weight: 500; font-size: 0.95rem; }
+        .nav-item:hover, .nav-item.active { background-color: var(--bg-card); color: var(--accent); }
+        .nav-item.active { border-right: 3px solid var(--accent); background-color: var(--accent-dim); }
+        .nav-item svg { width: 20px; height: 20px; fill: currentColor; }
+
+        #main-content { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-deep); overflow-y: auto; scroll-behavior: smooth; }
+
+        /* ==========================================
+           3. Pages & UI Components
+        ========================================== */
+        .page { display: none; padding: 25px 20px; max-width: 1000px; margin: 0 auto; width: 100%; animation: fadeIn 0.3s ease forwards; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .spark-heading { font-size: 2.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 25px; text-align: center; }
+        .spark-heading span { color: var(--accent); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+        .page-header h2 { font-size: 1.4rem; color: var(--text-primary); margin-bottom: 5px; font-weight: 600; }
+        .page-header p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; }
+
+        .search-box-container { position: relative; width: 100%; margin-bottom: 12px; display: flex; gap: 10px; }
+        .smart-input { width: 100%; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px 50px 16px 20px; color: var(--text-primary); font-size: 1rem; outline: none; transition: var(--transition-fast); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); flex: 1; }
+        .smart-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim), inset 0 2px 4px rgba(0,0,0,0.2); }
+        
+        .search-icon-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; transition: var(--transition-fast); }
+        .search-icon-btn:hover { color: var(--accent); transform: translateY(-50%) scale(1.1); }
+        .search-icon-btn svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
+        
+        .bg-task-btn { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 0 15px; cursor: pointer; display: none; align-items: center; transition: var(--transition-fast); }
+        .bg-task-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+        .btn { background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: var(--transition-fast); }
+        .btn:hover { background-color: var(--bg-card-hover); border-color: var(--accent); color: var(--accent); }
+        
+        .btn-synth { background: linear-gradient(135deg, #FFD700, #F59E0B); color: #0B1021; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px var(--accent-dim); transition: var(--transition-fast); width: 100%; justify-content: center; }
+        .btn-synth:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4); }
+
+        /* Loader & Results */
+        #global-loader { display: none; align-items: center; justify-content: center; padding: 15px; color: var(--accent); font-weight: 500; font-size: 0.9rem; gap: 10px; }
+        .spinner { width: 18px; height: 18px; border: 2px solid var(--accent-dim); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .results-container { display: flex; flex-direction: column; gap: 14px; }
+        .search-result { background: var(--bg-card); padding: 18px; border-radius: 10px; border: 1px solid var(--border-color); transition: var(--transition-fast); }
+        .search-result:hover { transform: translateY(-2px); border-color: var(--accent-dim); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .search-result .title { color: var(--accent); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; text-decoration: none; display: block; }
+        .search-result .snippet { color: var(--text-primary); font-size: 0.85rem; line-height: 1.6; }
+
+        .terminal-container { background: #050810; border: 1px solid #1A2235; border-radius: 10px; padding: 18px; font-family: monospace; color: var(--text-secondary); height: 220px; font-size: 0.85rem; overflow-y: auto; margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+        .terminal-line { margin-bottom: 6px; line-height: 1.5; }
+
+        /* Settings Card */
+        .settings-card { background: var(--bg-card); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+        .settings-card label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.9rem; }
+        
+        @media (min-width: 768px) {
+            body { flex-direction: row; }
+            #mobile-header { display: none; }
+            #sidebar { position: relative; left: 0 !important; box-shadow: none; }
+            .sidebar-overlay { display: none !important; }
+            .page { padding: 40px; }
+            .spark-heading { font-size: 3rem; margin-bottom: 40px; }
+            .btn-synth { width: auto; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Sparkling Gyan Content Studio</h1>
-        <div class="search-box">
-            <input type="text" id="query" placeholder="Enter your search query...">
-            <button onclick="performSearch()">Search</button>
+
+    <header id="mobile-header">
+        <div class="mobile-brand">Spark<span>Studio</span></div>
+        <button class="menu-btn" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <nav id="sidebar">
+        <div class="brand">Spark<span>Studio</span> 
+            <button class="close-sidebar" onclick="toggleSidebar()"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
         </div>
-        <div id="results"></div>
-    </div>
+        
+        <a class="nav-item active" data-target="page-search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Search
+        </a>
+        <a class="nav-item" data-target="page-deep-search">
+            <svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Deep Scan
+        </a>
+        <a class="nav-item" data-target="page-history" onclick="switchPage('page-history'); loadHistory()">
+            <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg> History
+        </a>
+        <!-- ⚡ New Settings Tab -->
+        <a class="nav-item" data-target="page-settings">
+            <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Settings
+        </a>
+    </nav>
+
+    <main id="main-content">
+        <div id="global-loader">
+            <div class="spinner"></div><span id="loader-text">Loading...</span>
+        </div>
+
+        <!-- SEARCH PAGE -->
+        <section id="page-search" class="page active">
+            <h1 class="spark-heading">Spark <span>Studio</span></h1>
+            <div class="search-box-container">
+                <input type="text" id="smart-input-field" class="smart-input" placeholder="Search topic or paste URL..." onkeypress="handleEnter(event, 'smart-input-field')">
+                <button class="search-icon-btn" onclick="performFastSearch()" title="Search">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                </button>
+            </div>
+            <div id="search-results-container" class="results-container"></div>
+        </section>
+
+        <!-- DEEP SCAN PAGE -->
+        <section id="page-deep-search" class="page">
+            <div class="page-header"><h2>Deep Scan</h2><p>Advanced multi-source AI research.</p></div>
+            <div class="search-box-container">
+                <input type="text" id="deep-input-field" class="smart-input" placeholder="Enter topic for deep analysis..." onkeypress="handleEnter(event, 'deep-input-field')">
+                <button class="search-icon-btn" onclick="executeDeepSearch()" title="Scan" id="deep-search-btn">
+                    <svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                </button>
+            </div>
+            <div id="terminal-view" class="terminal-container" style="display: none;"></div>
+            <div id="synthesis-result" class="results-container"></div>
+        </section>
+
+        <!-- HISTORY PAGE -->
+        <section id="page-history" class="page">
+            <div class="page-header"><h2>Research History</h2><p>Your past deep scans.</p></div>
+            <button class="btn" onclick="loadHistory()" style="margin-bottom: 20px;">Refresh History</button>
+            <div id="history-container" class="results-container"></div>
+        </section>
+
+        <!-- ⚡ SETTINGS PAGE -->
+        <section id="page-settings" class="page">
+            <div class="page-header"><h2>Settings</h2><p>Configure your Keys & App Preferences</p></div>
+            <div class="settings-card">
+                <label>Hugging Face / Backend API Token:</label>
+                <input type="password" id="api-key-input" class="smart-input" placeholder="Enter your secret token..." style="margin-bottom:15px;">
+                <button class="btn-synth" onclick="saveApiKey()">Save Token</button>
+                <p id="save-status" style="color: var(--success); margin-top: 10px; display: none; font-size: 0.85rem;">Token saved locally!</p>
+            </div>
+            
+            <div class="settings-card" style="margin-top: 20px; border-color: var(--accent-dim);">
+                <h3 style="color: var(--accent); margin-bottom: 10px;">Install App (PWA)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">Install Spark Studio on your Home Screen for a native app experience.</p>
+                <button class="btn" id="install-pwa-btn" style="display: none; border-color: var(--accent); color: var(--accent);">Install App</button>
+            </div>
+        </section>
+
+    </main>
 
     <script>
-        async function performSearch() {
-            const query = document.getElementById('query').value;
-            const resultsDiv = document.getElementById('results');
-            
-            if (!query) return;
+        // ==========================================
+        // ⚡ Service Worker Registration (PWA)
+        // ==========================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('Service Worker Registered!', reg))
+                .catch(err => console.error('Service Worker Error', err));
+            });
+        }
 
-            resultsDiv.innerHTML = '<p style="text-align:center;">Searching the cosmos...</p>';
-
-            try {
-                const response = await fetch('/api/fast-search', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        query: query,
-                        threshold: 0.5
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Search failed');
-                }
-
-                const data = await response.json();
-                resultsDiv.innerHTML = '';
-
-                if (data.results && data.results.length > 0) {
-                    data.results.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'result-item';
-                        
-                        const title = document.createElement('a');
-                        title.className = 'result-title';
-                        title.href = item.url;
-                        title.target = '_blank';
-                        title.textContent = item.title || 'No Title';
-                        
-                        const snippet = document.createElement('div');
-                        snippet.className = 'result-snippet';
-                        snippet.textContent = item.snippet || '';
-                        
-                        const url = document.createElement('div');
-                        url.className = 'result-url';
-                        url.textContent = item.url;
-                        
-                        div.appendChild(title);
-                        div.appendChild(snippet);
-                        div.appendChild(url);
-                        resultsDiv.appendChild(div);
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('install-pwa-btn');
+            if(installBtn) {
+                installBtn.style.display = 'block';
+                installBtn.addEventListener('click', () => {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') { console.log('User accepted PWA prompt'); }
+                        deferredPrompt = null;
+                        installBtn.style.display = 'none';
                     });
-                } else {
-                    resultsDiv.innerHTML = '<p style="text-align:center;">No results found in this galaxy.</p>';
-                }
-            } catch (error) {
-                resultsDiv.innerHTML = `<p style="text-align:center; color: #FC8181;">Error: ${error.message}</p>`;
+                });
+            }
+        });
+
+        // ==========================================
+        // ⚡ API Key Saving Logic
+        // ==========================================
+        function saveApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            localStorage.setItem('sparkApiToken', key);
+            const status = document.getElementById('save-status');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('sparkApiToken');
+            if(savedKey) document.getElementById('api-key-input').value = savedKey;
+        });
+
+        // Helper fetch function that automatically injects the API token
+        async function fetchAPI(endpoint, payload) {
+            const token = localStorage.getItem('sparkApiToken') || '';
+            const headers = { 'Content-Type': 'application/json' };
+            // Optional: If you update backend to read from frontend header, this will pass it!
+            if (token) headers['Authorization'] = `Bearer ${token}`; 
+            
+            return await fetch(endpoint, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload)
+            });
+        }
+
+        // ==========================================
+        // UI & Navigation Logic
+        // ==========================================
+        function switchPage(targetId) {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const targetNav = document.querySelector(`.nav-item[data-target="${targetId}"]`);
+            if(targetNav) targetNav.classList.add('active');
+            
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+            
+            if(window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebar-overlay').classList.remove('open');
             }
         }
 
-        document.getElementById('query').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebar-overlay').classList.toggle('open');
+        }
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() { switchPage(this.getAttribute('data-target')); });
         });
+
+        function handleEnter(e, id) {
+            if (e.key === 'Enter') {
+                if(id === 'smart-input-field') performFastSearch();
+                if(id === 'deep-input-field') executeDeepSearch();
+            }
+        }
+
+        // ==========================================
+        // Core Logic (Fast Search & Deep Search)
+        // ==========================================
+        async function performFastSearch() {
+            const query = document.getElementById('smart-input-field').value.trim();
+            if (!query) return;
+            const container = document.getElementById('search-results-container');
+            container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
+            
+            try {
+                const response = await fetchAPI('/api/fast-search', { query: query, threshold: 0.7 });
+                const data = await response.json();
+                container.innerHTML = '';
+                
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(res => {
+                        container.innerHTML += `
+                            <div class="search-result">
+                                <a href="${res.url}" target="_blank" class="title">${res.title}</a>
+                                <div class="snippet">${res.snippet}...</div>
+                                <div style="color:var(--text-muted); font-size: 0.75rem; margin-top:8px;">${res.url}</div>
+                            </div>`;
+                    });
+                } else {
+                    container.innerHTML = '<p>No results found.</p>';
+                }
+            } catch (err) {
+                container.innerHTML = `<p style="color:var(--danger)">Error: ${err.message}</p>`;
+            }
+        }
+
+        async function executeDeepSearch() {
+            const query = document.getElementById('deep-input-field').value.trim();
+            if (!query) return;
+            
+            const term = document.getElementById('terminal-view');
+            term.style.display = 'block';
+            term.innerHTML = `<div class="terminal-line"><span style="color:var(--accent)">></span> Starting deep AI scan for: ${query}...</div>`;
+            
+            try {
+                const response = await fetchAPI('/api/research/start', { query: query });
+                const data = await response.json();
+                if (data.task_id) {
+                    term.innerHTML += `<div class="terminal-line"><span style="color:var(--success)">></span> Task ID Generated: ${data.task_id} (Check History tab for results)</div>`;
+                }
+            } catch (err) {
+                term.innerHTML += `<div class="terminal-line"><span style="color:var(--danger)">></span> ERROR: ${err.message}</div>`;
+            }
+        }
+
+        async function loadHistory() {
+            const container = document.getElementById('history-container');
+            container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
+            try {
+                const response = await fetch('/api/history', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('sparkApiToken') || ''}` }
+                });
+                const data = await response.json();
+                container.innerHTML = '';
+                if(data.history) {
+                    data.history.forEach(item => {
+                        container.innerHTML += `
+                            <div class="search-result">
+                                <div style="color:var(--accent); font-weight:bold;">${item.status.toUpperCase()}</div>
+                                <div class="title">${item.query}</div>
+                                <div style="color:var(--text-muted); font-size: 0.8rem;">Task ID: ${item.task_id}</div>
+                            </div>`;
+                    });
+                }
+            } catch (err) {
+                container.innerHTML = `<p style="color:var(--danger)">Error loading history.</p>`;
+            }
+        }
     </script>
 </body>
 </html>
