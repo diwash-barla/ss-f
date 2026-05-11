@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparkling Gyan Content Studio</title>
+    <style>
+        body {
+            background-color: #0B1021;
+            color: #E2E8F0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #161B2E;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 800px;
+            margin-top: 3rem;
+        }
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #2D3748;
+            background-color: #1A202C;
+            color: white;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            border-color: #FFD700;
+        }
+        button {
+            background-color: #FFD700;
+            color: #0B1021;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #E6C200;
+        }
+        #results {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .result-item {
+            border-bottom: 1px solid #2D3748;
+            padding-bottom: 1rem;
+        }
+        .result-title {
+            font-size: 1.2rem;
+            color: #FFD700;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .result-title:hover {
+            text-decoration: underline;
+        }
+        .result-snippet {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #CBD5E0;
+        }
+        .result-url {
+            font-size: 0.8rem;
+            color: #718096;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sparkling Gyan Content Studio</h1>
+        <div class="search-box">
+            <input type="text" id="query" placeholder="Enter your search query...">
+            <button onclick="performSearch()">Search</button>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function performSearch() {
+            const query = document.getElementById('query').value;
+            const resultsDiv = document.getElementById('results');
+            
+            if (!query) return;
+
+            resultsDiv.innerHTML = '<p style="text-align:center;">Searching the cosmos...</p>';
+
+            try {
+                const response = await fetch('/api/fast-search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        threshold: 0.5
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Search failed');
+                }
+
+                const data = await response.json();
+                resultsDiv.innerHTML = '';
+
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'result-item';
+                        
+                        const title = document.createElement('a');
+                        title.className = 'result-title';
+                        title.href = item.url;
+                        title.target = '_blank';
+                        title.textContent = item.title || 'No Title';
+                        
+                        const snippet = document.createElement('div');
+                        snippet.className = 'result-snippet';
+                        snippet.textContent = item.snippet || '';
+                        
+                        const url = document.createElement('div');
+                        url.className = 'result-url';
+                        url.textContent = item.url;
+                        
+                        div.appendChild(title);
+                        div.appendChild(snippet);
+                        div.appendChild(url);
+                        resultsDiv.appendChild(div);
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p style="text-align:center;">No results found in this galaxy.</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="text-align:center; color: #FC8181;">Error: ${error.message}</p>`;
+            }
+        }
+
+        document.getElementById('query').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
+</body>
+</html>
