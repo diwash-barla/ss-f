@@ -4,29 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Spark Search Studio</title>
-    
+
     <!-- ⚡ PWA Meta Tags -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0B1021">
+    <meta name="theme-color" content="#030712">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1164/1164954.png">
 
     <style>
         /* ==========================================
-           1. CSS Variables (Midnight Blue & Golden)
-        ========================================== */
+           1. CSS Variables (Professional Theme)
+           ========================================== */
         :root {
-            --bg-deep: #0B1021;          /* Midnight Blue */
-            --bg-surface: rgba(22, 27, 46, 0.85); /* Slightly lighter blue */
-            --bg-card: #161B2E;          /* Card Background */
-            --bg-card-hover: #1E253C;
-            --accent: #FFD700;           /* Golden */
-            --accent-dim: rgba(255, 215, 0, 0.15); /* Golden Glow */
-            --text-primary: #E2E8F0;
-            --text-secondary: #94A3B8;
-            --text-muted: #64748B;
-            --border-color: #334155;
+            --bg-deep: #030712;
+            --bg-surface: rgba(11, 17, 32, 0.85);
+            --bg-card: #111827;
+            --bg-card-hover: #1F2937;
+            --accent: #0EA5E9;
+            --accent-dim: rgba(14, 165, 233, 0.15);
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --text-muted: #4B5563;
+            --border-color: #1F2937;
             --danger: #EF4444;
             --success: #10B981;
             --warning: #F59E0B;
@@ -35,30 +35,37 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+
         body { background-color: var(--bg-deep); color: var(--text-primary); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-deep); }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
         /* ==========================================
            2. Mobile Header & Sidebar
-        ========================================== */
+           ========================================== */
         #mobile-header { display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 16px 20px; border-bottom: 1px solid var(--border-color); z-index: 20; }
         .menu-btn { background: none; border: none; color: var(--text-primary); cursor: pointer; transition: var(--transition-fast); }
         .menu-btn:active { transform: scale(0.9); }
         .menu-btn svg { width: 26px; height: 26px; fill: currentColor; }
+
         .mobile-brand { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
         .mobile-brand span { color: var(--accent); }
-        
-        #sidebar { position: fixed; top: 0; left: -100%; width: var(--nav-width); height: 100vh; background-color: #101524; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; z-index: 1000; transition: var(--transition-fast); box-shadow: 5px 0 25px rgba(0,0,0,0.5); }
+
+        #sidebar { position: fixed; top: 0; left: -100%; width: var(--nav-width); height: 100vh; background-color: #0B1120; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; z-index: 1000; transition: var(--transition-fast); box-shadow: 5px 0 25px rgba(0,0,0,0.5); }
         #sidebar.open { left: 0; }
+
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 999; display: none; opacity: 0; transition: var(--transition-fast); }
         .sidebar-overlay.open { display: block; opacity: 1; }
-        
+
         .brand { padding: 0 24px 24px 24px; font-size: 1.3rem; font-weight: 700; color: var(--text-primary); border-bottom: 1px solid var(--border-color); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
         .brand span { color: var(--accent); }
+
         .close-sidebar { background: none; border: none; color: var(--text-secondary); cursor: pointer; display: block; transition: var(--transition-fast); }
+        .close-sidebar:hover { color: var(--danger); }
+
         .nav-item { padding: 14px 24px; display: flex; align-items: center; gap: 14px; color: var(--text-secondary); text-decoration: none; cursor: pointer; transition: var(--transition-fast); font-weight: 500; font-size: 0.95rem; }
         .nav-item:hover, .nav-item.active { background-color: var(--bg-card); color: var(--accent); }
         .nav-item.active { border-right: 3px solid var(--accent); background-color: var(--accent-dim); }
@@ -67,52 +74,106 @@
         #main-content { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-deep); overflow-y: auto; scroll-behavior: smooth; }
 
         /* ==========================================
-           3. Pages & UI Components
-        ========================================== */
+           3. Pages & Stylish Heading
+           ========================================== */
         .page { display: none; padding: 25px 20px; max-width: 1000px; margin: 0 auto; width: 100%; animation: fadeIn 0.3s ease forwards; }
         .page.active { display: block; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .spark-heading { font-size: 2.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 25px; text-align: center; }
-        .spark-heading span { color: var(--accent); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+
+        .spark-heading { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); margin-bottom: 25px; text-align: center; }
+        .spark-heading span { color: var(--accent); }
+
         .page-header h2 { font-size: 1.4rem; color: var(--text-primary); margin-bottom: 5px; font-weight: 600; }
         .page-header p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; }
-
-        .search-box-container { position: relative; width: 100%; margin-bottom: 12px; display: flex; gap: 10px; }
-        .smart-input { width: 100%; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px 50px 16px 20px; color: var(--text-primary); font-size: 1rem; outline: none; transition: var(--transition-fast); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); flex: 1; }
-        .smart-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim), inset 0 2px 4px rgba(0,0,0,0.2); }
-        
-        .search-icon-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; transition: var(--transition-fast); }
-        .search-icon-btn:hover { color: var(--accent); transform: translateY(-50%) scale(1.1); }
-        .search-icon-btn svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
-        
-        .bg-task-btn { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 0 15px; cursor: pointer; display: none; align-items: center; transition: var(--transition-fast); }
-        .bg-task-btn:hover { color: var(--accent); border-color: var(--accent); }
-
-        .btn { background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: var(--transition-fast); }
-        .btn:hover { background-color: var(--bg-card-hover); border-color: var(--accent); color: var(--accent); }
-        
-        .btn-synth { background: linear-gradient(135deg, #FFD700, #F59E0B); color: #0B1021; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px var(--accent-dim); transition: var(--transition-fast); width: 100%; justify-content: center; }
-        .btn-synth:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4); }
-
-        /* Loader & Results */
-        #global-loader { display: none; align-items: center; justify-content: center; padding: 15px; color: var(--accent); font-weight: 500; font-size: 0.9rem; gap: 10px; }
-        .spinner { width: 18px; height: 18px; border: 2px solid var(--accent-dim); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .results-container { display: flex; flex-direction: column; gap: 14px; }
-        .search-result { background: var(--bg-card); padding: 18px; border-radius: 10px; border: 1px solid var(--border-color); transition: var(--transition-fast); }
-        .search-result:hover { transform: translateY(-2px); border-color: var(--accent-dim); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .search-result .title { color: var(--accent); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; text-decoration: none; display: block; }
-        .search-result .snippet { color: var(--text-primary); font-size: 0.85rem; line-height: 1.6; }
-
-        .terminal-container { background: #050810; border: 1px solid #1A2235; border-radius: 10px; padding: 18px; font-family: monospace; color: var(--text-secondary); height: 220px; font-size: 0.85rem; overflow-y: auto; margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-        .terminal-line { margin-bottom: 6px; line-height: 1.5; }
 
         /* Settings Card */
         .settings-card { background: var(--bg-card); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
         .settings-card label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* ==========================================
+           4. Search Bar & Quick Actions
+           ========================================== */
+        .search-box-container { position: relative; width: 100%; margin-bottom: 12px; display: flex; gap: 10px; }
+        .smart-input { width: 100%; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px 50px 16px 20px; color: var(--text-primary); font-size: 1rem; outline: none; transition: var(--transition-fast); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); flex: 1; }
+        .smart-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim), 0 4px 15px rgba(0,0,0,0.3); background-color: #151d2e; }
+
+        .search-icon-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; transition: var(--transition-fast); }
+        .search-icon-btn:hover { color: var(--accent); transform: translateY(-50%) scale(1.1); }
+        .search-icon-btn:disabled { opacity: 0.8; cursor: not-allowed; transform: translateY(-50%) scale(1); }
+        .search-icon-btn svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
+
+        .bg-task-btn { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 0 15px; cursor: pointer; display: none; align-items: center; justify-content: center; transition: var(--transition-fast); }
+        .bg-task-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+        #active-tasks-widget { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; padding: 10px 20px; border-radius: 30px; font-weight: bold; font-size: 0.9rem; display: none; align-items: center; gap: 10px; cursor: pointer; box-shadow: 0 5px 15px rgba(14, 165, 233, 0.4); z-index: 50; animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes bounceIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .quick-actions { display: flex; gap: 15px; align-items: center; margin-bottom: 30px; padding-left: 5px; flex-wrap: wrap; }
+        .quick-action-btn { background: rgba(17, 24, 39, 0.6); border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 12px; color: var(--text-secondary); font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: var(--transition-fast); font-weight: 500; }
+        .quick-action-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+        .quick-action-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* ==========================================
+           5. Loader, Results & Media System
+           ========================================== */
+        #global-loader { display: none; align-items: center; justify-content: center; padding: 15px; color: var(--accent); font-weight: 500; font-size: 0.9rem; gap: 10px; text-align: center; }
+        .spinner { width: 18px; height: 18px; border: 2px solid var(--accent-dim); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .results-container { display: flex; flex-direction: column; gap: 14px; }
+        .search-result { background: var(--bg-card); padding: 18px; border-radius: 10px; border: 1px solid var(--border-color); transition: var(--transition-fast); cursor: default; }
+        .search-result:hover { transform: translateY(-2px); border-color: var(--accent-dim); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .search-result .url { color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 8px; word-break: break-all; display: flex; align-items: center; gap: 6px; }
+        .search-result .title { color: var(--accent); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; text-decoration: none; display: block; transition: var(--transition-fast); }
+        .search-result .title:hover { text-decoration: underline; }
+        .search-result .snippet { color: var(--text-primary); font-size: 0.85rem; line-height: 1.6; }
+
+        .btn { background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: var(--transition-fast); }
+        .btn:hover { background-color: var(--bg-card-hover); border-color: var(--text-secondary); }
+
+        .btn-synth { background: linear-gradient(135deg, var(--accent), #3B82F6); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px var(--accent-dim); transition: var(--transition-fast); width: 100%; justify-content: center; margin-bottom: 10px; }
+        .btn-synth:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4); }
+        .btn-synth:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .synthesis-card { background: linear-gradient(to bottom, #111827, #0B1120); border: 1px solid var(--accent); border-radius: 10px; padding: 20px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; animation: fadeIn 0.4s ease; }
+
+        .media-filters { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-bottom: 20px; background: var(--bg-card); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-color); align-items: center; }
+        .filter-toggle { display: flex; align-items: center; gap: 8px; color: var(--text-primary); font-size: 0.85rem; cursor: pointer; user-select: none; }
+        .filter-toggle input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+        .filter-buttons { display: flex; gap: 8px; }
+
+        #media-status { font-size: 0.8rem; color: var(--accent); margin-bottom: 15px; display: none; align-items: center; gap: 8px; background: var(--accent-dim); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(14, 165, 233, 0.3); }
+
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .media-card { background: var(--bg-card); border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); position: relative; transition: var(--transition-fast); }
+        .media-card:hover { border-color: var(--accent-dim); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
+        .media-card img, .media-card video { width: 100%; height: 130px; object-fit: cover; display: block; }
+        .media-card.junk-media { opacity: 0.3; filter: grayscale(100%); }
+        .junk-badge { position: absolute; top: 6px; right: 6px; background: rgba(239, 68, 68, 0.9); color: white; font-size: 0.6rem; font-weight: bold; padding: 3px 6px; border-radius: 4px; display: none; z-index: 10; backdrop-filter: blur(2px); }
+        .media-card.junk-media .junk-badge { display: block; }
+
+        /* ==========================================
+           6. Article Overlay & Terminal
+           ========================================== */
+        #article-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-deep); z-index: 2000; display: none; flex-direction: column; animation: fadeIn 0.2s ease; }
+        .article-header { background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .article-header .source-url { color: var(--text-secondary); font-family: monospace; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
+        .close-btn { background: rgba(239, 68, 68, 0.1); border: 1px solid transparent; color: var(--danger); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; transition: var(--transition-fast); font-weight: 500; }
+        .close-btn:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.3); }
+
+        .article-content-wrapper { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; }
+        .article-pro-view { width: 100%; max-width: 800px; }
+        .article-pro-view p { font-size: 1.05rem; line-height: 1.8; margin-bottom: 18px; color: var(--text-primary); }
+        .embedded-media { width: 100%; border-radius: 10px; margin: 20px 0; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+
+        .terminal-container { background: #000; border: 1px solid #222; border-radius: 10px; padding: 18px; font-family: monospace; color: var(--text-secondary); height: 220px; font-size: 0.85rem; overflow-y: auto; margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+        .terminal-line { margin-bottom: 6px; line-height: 1.5; }
         
+        .blinking-dots { display: inline-block; animation: blink 1.5s infinite; font-weight: bold; color: var(--accent); letter-spacing: 2px; }
+        @keyframes blink { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+        @keyframes scanMove { 0% { transform: translateY(-4px) translateX(-3px); } 100% { transform: translateY(4px) translateX(3px); } }
+
         @media (min-width: 768px) {
             body { flex-direction: row; }
             #mobile-header { display: none; }
@@ -120,6 +181,9 @@
             .sidebar-overlay { display: none !important; }
             .page { padding: 40px; }
             .spark-heading { font-size: 3rem; margin-bottom: 40px; }
+            .media-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+            .media-card img, .media-card video { height: 170px; }
+            .terminal-container { height: 250px; font-size: 0.9rem; }
             .btn-synth { width: auto; }
         }
     </style>
@@ -136,10 +200,9 @@
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <nav id="sidebar">
-        <div class="brand">Spark<span>Studio</span> 
+        <div class="brand">Spark<span>Studio</span>
             <button class="close-sidebar" onclick="toggleSidebar()"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
         </div>
-        
         <a class="nav-item active" data-target="page-search">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Search
         </a>
@@ -149,67 +212,177 @@
         <a class="nav-item" data-target="page-history" onclick="switchPage('page-history'); loadHistory()">
             <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg> History
         </a>
-        <!-- ⚡ New Settings Tab -->
+        <a class="nav-item" data-target="page-media">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Media
+        </a>
+        <!-- ⚡ Added Settings Tab -->
         <a class="nav-item" data-target="page-settings">
             <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Settings
         </a>
     </nav>
 
+    <!-- ⚡ Active Tasks Widget -->
+    <div id="active-tasks-widget" onclick="navigateTo('page-history'); loadHistory();">
+        <div class="spinner" style="border-top-color: white; border-width: 2px;"></div>
+        <span id="active-task-count">1 Running</span>
+    </div>
+
     <main id="main-content">
         <div id="global-loader">
-            <div class="spinner"></div><span id="loader-text">Loading...</span>
+            <div class="spinner"></div>
+            <span id="loader-text">Loading...</span>
         </div>
 
-        <!-- SEARCH PAGE -->
         <section id="page-search" class="page active">
-            <h1 class="spark-heading">Spark <span>Studio</span></h1>
+            <h1 class="spark-heading">Spark <span>Search</span></h1>
             <div class="search-box-container">
                 <input type="text" id="smart-input-field" class="smart-input" placeholder="Search topic or paste URL..." onkeypress="handleEnter(event, 'smart-input-field')">
-                <button class="search-icon-btn" onclick="performFastSearch()" title="Search">
+                <button class="search-icon-btn" onclick="executeSmartInput()" title="Search">
                     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                </button>
+            </div>
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="navigateTo('page-deep-search')">
+                    <svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg> Deep Search
+                </button>
+                <button class="quick-action-btn" onclick="navigateToMedia('image')">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg> Images
+                </button>
+                <button class="quick-action-btn" onclick="navigateToMedia('video')">
+                    <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Videos
                 </button>
             </div>
             <div id="search-results-container" class="results-container"></div>
         </section>
 
-        <!-- DEEP SCAN PAGE -->
         <section id="page-deep-search" class="page">
-            <div class="page-header"><h2>Deep Scan</h2><p>Advanced multi-source AI research.</p></div>
+            <div class="page-header">
+                <h2>Deep Scan</h2>
+                <p>Advanced multi-source threshold scanning.</p>
+            </div>
             <div class="search-box-container">
                 <input type="text" id="deep-input-field" class="smart-input" placeholder="Enter topic for deep analysis..." onkeypress="handleEnter(event, 'deep-input-field')">
                 <button class="search-icon-btn" onclick="executeDeepSearch()" title="Scan" id="deep-search-btn">
-                    <svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                </button>
+                <button class="bg-task-btn" id="run-bg-btn" onclick="sendTaskToBackground()" title="Run in Background">
+                    <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
                 </button>
             </div>
+            
+            <!-- 1. Terminal View -->
             <div id="terminal-view" class="terminal-container" style="display: none;"></div>
-            <div id="synthesis-result" class="results-container"></div>
+            
+            <!-- 2. Synthesis Result (Knowledge Tension & Lore) -->
+            <div id="synthesis-result" class="synthesis-card"></div>
+
+            <!-- 3. Google Style Scanned Sources Container (View Sources Button will load here) -->
+            <div id="deep-results-container" class="results-container"></div>
+
+            <!-- 4. Script Editor & Video Creator -->
+            <div id="script-editor-section" style="display: none; margin-top: 30px; animation: fadeIn 0.4s ease;">
+                <h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> 
+                    Review & Edit Script
+                </h3>
+                <textarea id="final-script-box" style="width: 100%; height: 350px; background: rgba(0,0,0,0.4); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; font-size: 1rem; line-height: 1.8; resize: vertical; outline: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);"></textarea>
+                
+                <div style="display: flex; gap: 15px; margin-top: 20px; align-items: center;">
+                    <select id="video-orientation" style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); color: var(--text-primary); border: 1px solid var(--border-color); outline: none; font-size: 0.95rem;">
+                        <option value="horizontal">Horizontal (16:9 - YouTube)</option>
+                        <option value="vertical">Vertical (9:16 - Shorts/Reels)</option>
+                    </select>
+                    
+                    <button class="btn-synth" onclick="dispatchToVideoCreator()" style="background: linear-gradient(135deg, var(--success), #059669); flex: 1;">
+                        <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 9.36l-7.63 7.63a1 1 0 0 1-1.41 0L2.83 21.1a1 1 0 0 1 0-1.41l7.63-7.63a6 6 0 0 1 9.36-7.94l-3.77 3.77a1 1 0 0 0-.05 1.36L14.7 6.3z"/></svg>
+                        Make Video
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Generate Script Trigger Button -->
+            <button id="generate-script-btn" class="btn-synth" onclick="generateScriptFromData()" style="margin-top: 25px; display: none;">
+                <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Write Script by AI
+            </button>
         </section>
 
-        <!-- HISTORY PAGE -->
         <section id="page-history" class="page">
-            <div class="page-header"><h2>Research History</h2><p>Your past deep scans.</p></div>
-            <button class="btn" onclick="loadHistory()" style="margin-bottom: 20px;">Refresh History</button>
+            <div class="page-header">
+                <h2>Research History</h2>
+                <p>Your past deep scans (Auto-deletes after 29 days).</p>
+            </div>
+            <button class="btn" onclick="loadHistory()" style="margin-bottom: 20px;">
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Refresh History
+            </button>
             <div id="history-container" class="results-container"></div>
         </section>
 
-        <!-- ⚡ SETTINGS PAGE -->
-        <section id="page-settings" class="page">
-            <div class="page-header"><h2>Settings</h2><p>Configure your Keys & App Preferences</p></div>
-            <div class="settings-card">
-                <label>Hugging Face / Backend API Token:</label>
-                <input type="password" id="api-key-input" class="smart-input" placeholder="Enter your secret token..." style="margin-bottom:15px;">
-                <button class="btn-synth" onclick="saveApiKey()">Save Token</button>
-                <p id="save-status" style="color: var(--success); margin-top: 10px; display: none; font-size: 0.85rem;">Token saved locally!</p>
+        <section id="page-media" class="page">
+            <div class="page-header">
+                <h2>Media Library</h2>
+                <p>Images and videos loaded from your searches.</p>
             </div>
-            
-            <div class="settings-card" style="margin-top: 20px; border-color: var(--accent-dim);">
-                <h3 style="color: var(--accent); margin-bottom: 10px;">Install App (PWA)</h3>
-                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">Install Spark Studio on your Home Screen for a native app experience.</p>
-                <button class="btn" id="install-pwa-btn" style="display: none; border-color: var(--accent); color: var(--accent);">Install App</button>
+            <div class="search-box-container" style="margin-bottom: 20px;">
+                <input type="text" id="media-url-input" class="smart-input" placeholder="Paste URL to extract media..." onkeypress="handleEnter(event, 'media-url-input')">
+                <button class="search-icon-btn" onclick="executeMediaScrape()" title="Extract Media">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                </button>
+            </div>
+
+            <div class="media-filters">
+                <label class="filter-toggle">
+                    <input type="checkbox" id="filter-junk-btn" checked onchange="toggleJunkMedia()"> Hide Junk/Avatars
+                </label>
+                <div class="filter-buttons">
+                    <button class="btn" onclick="filterMediaType('all')">All</button>
+                    <button class="btn" onclick="filterMediaType('image')">Images</button>
+                    <button class="btn" onclick="filterMediaType('video')">Videos</button>
+                </div>
+            </div>
+            <div id="media-status">
+                <div class="spinner" style="width:14px;height:14px;"></div>
+                <span id="media-status-text">Loading media from sources...</span>
+            </div>
+            <div id="media-grid" class="media-grid">
+                <p style="color: var(--text-muted); grid-column: 1/-1; font-size: 0.95rem; text-align:center; padding: 20px;">No media loaded yet. Search something first.</p>
             </div>
         </section>
 
+        <!-- ⚡ SETTINGS PAGE (Added back) -->
+        <section id="page-settings" class="page">
+            <div class="page-header">
+                <h2>Settings</h2>
+                <p>Configure your Keys & App Preferences</p>
+            </div>
+            <div class="settings-card">
+                <label>API Auth Token (Hugging Face / Backend):</label>
+                <input type="password" id="api-key-input" class="smart-input" placeholder="Enter your secret token..." style="margin-bottom:15px;">
+                <button class="btn" onclick="saveApiKey()" style="border-color: var(--accent); color: var(--accent);">Save Token</button>
+                <p id="save-status" style="color: var(--success); margin-top: 10px; display: none; font-size: 0.85rem;">Token saved locally!</p>
+            </div>
+            
+            <div class="settings-card" style="margin-top: 20px; border-color: var(--border-color);">
+                <h3 style="color: var(--text-primary); margin-bottom: 10px; font-size: 1.1rem;">Install App (PWA)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">Install Spark Studio on your Home Screen for a native app experience.</p>
+                <button class="btn-synth" id="install-pwa-btn" style="display: none; width: auto;">Install App</button>
+                <p id="pwa-status" style="font-size: 0.85rem; color: var(--text-muted);">App is already installed or your browser does not support it.</p>
+            </div>
+        </section>
     </main>
+
+    <div id="article-overlay">
+        <div class="article-header">
+            <div class="source-url" id="article-source-url">Source: //unknown</div>
+            <button class="close-btn" onclick="closeArticleView()">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Close
+            </button>
+        </div>
+        <div class="article-content-wrapper">
+            <div class="article-pro-view" id="article-pro-content"></div>
+        </div>
+    </div>
 
     <script>
         // ==========================================
@@ -228,21 +401,25 @@
             e.preventDefault();
             deferredPrompt = e;
             const installBtn = document.getElementById('install-pwa-btn');
+            const pwaStatus = document.getElementById('pwa-status');
             if(installBtn) {
-                installBtn.style.display = 'block';
+                installBtn.style.display = 'inline-flex';
+                pwaStatus.style.display = 'none';
                 installBtn.addEventListener('click', () => {
                     deferredPrompt.prompt();
                     deferredPrompt.userChoice.then((choiceResult) => {
                         if (choiceResult.outcome === 'accepted') { console.log('User accepted PWA prompt'); }
                         deferredPrompt = null;
                         installBtn.style.display = 'none';
+                        pwaStatus.style.display = 'block';
+                        pwaStatus.innerText = "App installed successfully!";
                     });
                 });
             }
         });
 
         // ==========================================
-        // ⚡ API Key Saving Logic
+        // ⚡ API Key Saving Logic & Fetch Wrapper
         // ==========================================
         function saveApiKey() {
             const key = document.getElementById('api-key-input').value.trim();
@@ -257,35 +434,54 @@
             if(savedKey) document.getElementById('api-key-input').value = savedKey;
         });
 
-        // Helper fetch function that automatically injects the API token
-        async function fetchAPI(endpoint, payload) {
+        // Universal wrapper to inject auth token securely into all API calls
+        async function fetchWithAuth(url, options = {}) {
             const token = localStorage.getItem('sparkApiToken') || '';
-            const headers = { 'Content-Type': 'application/json' };
-            // Optional: If you update backend to read from frontend header, this will pass it!
-            if (token) headers['Authorization'] = `Bearer ${token}`; 
-            
-            return await fetch(endpoint, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(payload)
-            });
+            options.headers = options.headers || {};
+            if (token) options.headers['Authorization'] = `Bearer ${token}`;
+            return await fetch(url, options);
         }
 
-        // ==========================================
-        // UI & Navigation Logic
-        // ==========================================
-        function switchPage(targetId) {
+
+        // --- System States & Caching ---
+        let currentResearchData = null; 
+        let globalMedia = [];
+        let currentMediaTypeFilter = 'all';
+        const extractionCache = {};
+        let pendingMediaUrls = [];
+        let mediaProcessedIndex = 0;
+        let isExtractingMedia = false;
+
+        // --- Navigation & Page Switch ---
+        function switchPage(targetId, pushToHistory = true) {
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             const targetNav = document.querySelector(`.nav-item[data-target="${targetId}"]`);
             if(targetNav) targetNav.classList.add('active');
-            
+
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
-            
-            if(window.innerWidth < 768) {
-                document.getElementById('sidebar').classList.remove('open');
-                document.getElementById('sidebar-overlay').classList.remove('open');
+
+            if (pushToHistory) {
+                history.pushState({ page: targetId }, "", `#${targetId}`);
             }
+
+            // Auto-Extract Media When Entering Media Page
+            if(targetId === 'page-media') {
+                startSequentialMediaLoading();
+            }
+        }
+
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.page) switchPage(e.state.page, false);
+            else switchPage('page-search', false);
+        });
+
+        history.replaceState({ page: 'page-search' }, "", "#page-search");
+        function navigateTo(pageId) { switchPage(pageId); }
+        function navigateToMedia(type) {
+            currentMediaTypeFilter = type;
+            switchPage('page-media');
+            renderMediaGrid();
         }
 
         function toggleSidebar() {
@@ -294,89 +490,710 @@
         }
 
         document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() { switchPage(this.getAttribute('data-target')); });
+            item.addEventListener('click', function() {
+                if(window.innerWidth < 768 && document.getElementById('sidebar').classList.contains('open')) {
+                    toggleSidebar();
+                }
+                const targetId = this.getAttribute('data-target');
+                switchPage(targetId);
+            });
         });
 
-        function handleEnter(e, id) {
-            if (e.key === 'Enter') {
-                if(id === 'smart-input-field') performFastSearch();
-                if(id === 'deep-input-field') executeDeepSearch();
+        // --- Terminal & Offline Logic ---
+        function saveTerminalState() {
+            const term = document.getElementById('terminal-view');
+            localStorage.setItem('sparkTerminalHtml', term.innerHTML);
+        }
+
+        function restoreTerminalState() {
+            const savedHtml = localStorage.getItem('sparkTerminalHtml');
+            if (savedHtml) {
+                const term = document.getElementById('terminal-view');
+                term.style.display = 'block';
+                term.innerHTML = savedHtml;
+                term.scrollTop = term.scrollHeight;
             }
         }
 
-        // ==========================================
-        // Core Logic (Fast Search & Deep Search)
-        // ==========================================
-        async function performFastSearch() {
-            const query = document.getElementById('smart-input-field').value.trim();
-            if (!query) return;
+        document.addEventListener('DOMContentLoaded', restoreTerminalState);
+        window.addEventListener('offline', () => addTerminalLog("⚠️ INTERNET DISCONNECTED. State saved. Retries paused.", "var(--danger)"));
+        window.addEventListener('online', () => {
+            addTerminalLog("🌐 INTERNET RESTORED. System online.", "var(--success)");
+            pollActiveTasks();
+        });
+
+        let processingNode = null;
+        function addTerminalLog(msg, color="var(--text-secondary)", isProcessing=false) {
+            const term = document.getElementById('terminal-view');
+            if (processingNode && processingNode.parentNode) processingNode.parentNode.removeChild(processingNode);
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            if (isProcessing) {
+                line.innerHTML = `<span style="color:${color}">></span> <span style="color:${color}">${msg}</span><span class="blinking-dots">...</span>`;
+                processingNode = line;
+            } else {
+                line.innerHTML = `<span style="color:${color}">></span> <span style="color:${color}">${msg}</span>`;
+                processingNode = null;
+            }
+            term.appendChild(line);
+            term.scrollTop = term.scrollHeight;
+            saveTerminalState();
+        }
+
+        function handleEnter(e, inputId) {
+            if (e.key === 'Enter') {
+                if (inputId === 'smart-input-field') executeSmartInput();
+                if (inputId === 'deep-input-field') executeDeepSearch();
+                if (inputId === 'media-url-input') executeMediaScrape();
+            }
+        }
+
+        function showLoader(text, show) {
+            const loader = document.getElementById('global-loader');
+            document.getElementById('loader-text').innerText = text;
+            loader.style.display = show ? 'flex' : 'none';
+        }
+
+        // --- Core Fast Search ---
+        async function executeSmartInput() {
+            const input = document.getElementById('smart-input-field').value.trim();
+            if (!input) return;
+            const isUrl = /^(https?:\/\/)/i.test(input);
+            if (isUrl) {
+                if(!pendingMediaUrls.includes(input)) pendingMediaUrls.push(input);
+                openArticleView(input);
+            } else {
+                performFastSearch(input);
+            }
+        }
+
+        async function performFastSearch(query) {
             const container = document.getElementById('search-results-container');
-            container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
-            
+            container.innerHTML = '';
+            showLoader("Loading from database...", true);
             try {
-                const response = await fetchAPI('/api/fast-search', { query: query, threshold: 0.7 });
+                // ⚡ Using fetchWithAuth wrapper here
+                const response = await fetchWithAuth('/api/fast-search', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query, threshold: 0.7 })
+                });
                 const data = await response.json();
-                container.innerHTML = '';
-                
+                showLoader("", false);
                 if (data.results && data.results.length > 0) {
+                    const newUrls = data.results.map(r => r.url);
+                    newUrls.forEach(u => {
+                        if(!pendingMediaUrls.includes(u)) pendingMediaUrls.push(u); // Feed into media queue
+                    });
                     data.results.forEach(res => {
-                        container.innerHTML += `
-                            <div class="search-result">
-                                <a href="${res.url}" target="_blank" class="title">${res.title}</a>
-                                <div class="snippet">${res.snippet}...</div>
-                                <div style="color:var(--text-muted); font-size: 0.75rem; margin-top:8px;">${res.url}</div>
-                            </div>`;
+                        const div = document.createElement('div');
+                        div.className = 'search-result';
+                        div.innerHTML = `
+                            <div class="url">
+                                <svg width="14" height="14" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+                                ${res.url}
+                            </div>
+                            <a href="#" class="title" onclick="event.preventDefault(); openArticleView('${res.url}')">${res.title}</a>
+                            <div class="snippet">${res.snippet}...</div>
+                        `;
+                        container.appendChild(div);
                     });
                 } else {
-                    container.innerHTML = '<p>No results found.</p>';
+                    container.innerHTML = '<p style="color:var(--text-secondary)">No results found.</p>';
                 }
             } catch (err) {
+                showLoader("", false);
                 container.innerHTML = `<p style="color:var(--danger)">Error: ${err.message}</p>`;
             }
+        }
+
+        // =========================================================================
+        // 🚀 POLLING & BACKGROUND TASK LOGIC
+        // =========================================================================
+
+        let activeTasks = JSON.parse(localStorage.getItem('sparkActiveTasks')) || {};
+        let currentViewedTaskId = null;
+        let renderedLogsCount = 0;
+        let globalPoller = null;
+
+        const scanStaticSvg = `<svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+        const scanAnimatedSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" opacity="0.5"/>
+            <polyline points="14 2 14 8 20 8" opacity="0.5"/>
+            <g style="animation: scanMove 1.2s ease-in-out infinite alternate;">
+                <circle cx="11" cy="14" r="4" stroke="var(--accent)"/>
+                <line x1="13.8" y1="16.8" x2="18" y2="21" stroke="var(--accent)"/>
+            </g>
+        </svg>`;
+
+        function initGlobalPoller() {
+            updateActiveTasksUI();
+            if(!globalPoller) {
+                globalPoller = setInterval(pollActiveTasks, 3000); 
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') pollActiveTasks();
+        });
+
+        async function pollActiveTasks() {
+            const taskIds = Object.keys(activeTasks);
+            if(taskIds.length === 0) return;
+
+            for (const taskId of taskIds) {
+                try {
+                    // ⚡ Using fetchWithAuth
+                    const response = await fetchWithAuth(`/api/research/status/${taskId}`);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+
+                    if (taskId === currentViewedTaskId && document.getElementById('page-deep-search').classList.contains('active')) {
+                        updateDeepSearchUI(data);
+                    }
+
+                    if (data.status === 'complete' || data.status === 'failed') {
+                        delete activeTasks[taskId];
+                        localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
+                        updateActiveTasksUI();
+                    }
+                } catch (e) {
+                    console.log(`Polling issue for ${taskId}, retrying...`);
+                }
+            }
+        }
+
+        function updateActiveTasksUI() {
+            const count = Object.keys(activeTasks).length;
+            const widget = document.getElementById('active-tasks-widget');
+            if (count > 0) {
+                document.getElementById('active-task-count').innerText = `${count} Running Task${count>1?'s':''}`;
+                widget.style.display = 'flex';
+            } else {
+                widget.style.display = 'none';
+            }
+        }
+
+        function sendTaskToBackground() {
+            navigateTo('page-search');
+            addTerminalLog("> Task shifted to background. Keep exploring!", "var(--success)");
+        }
+
+        function updateDeepSearchUI(data) {
+            const searchBtn = document.getElementById('deep-search-btn');
+            
+            if (data.logs && data.logs.length > renderedLogsCount) {
+                for (let i = renderedLogsCount; i < data.logs.length; i++) {
+                    const log = data.logs[i];
+                    const isProcessing = (data.status === 'processing' && i === data.logs.length - 1);
+                    addTerminalLog(log.msg, log.color || "var(--text-secondary)", isProcessing);
+                }
+                renderedLogsCount = data.logs.length;
+            }
+
+            if (data.status === 'complete' && !document.getElementById('synthesis-result').innerHTML) {
+                searchBtn.innerHTML = scanStaticSvg;
+                searchBtn.disabled = false;
+                document.getElementById('run-bg-btn').style.display = 'none';
+                
+                addTerminalLog("✅ Data safely retrieved from server.", "var(--success)", false);
+
+                const payload = data.result || data; 
+                
+                const synthesisData = payload.data || payload; 
+                renderSynthesis(synthesisData);
+
+                if (payload.urls && payload.urls.length > 0) {
+                    payload.urls.forEach(u => {
+                        let urlStr = u.url || u;
+                        if(!pendingMediaUrls.includes(urlStr)) pendingMediaUrls.push(urlStr); 
+                    });
+                    renderSearchResults(payload.urls);
+                }
+            } 
+            else if (data.status === 'failed') {
+                searchBtn.innerHTML = scanStaticSvg;
+                searchBtn.disabled = false;
+                document.getElementById('run-bg-btn').style.display = 'none';
+                addTerminalLog(`❌ Task Failed: ${data.error}`, "var(--danger)");
+            }
+        }
+
+        function renderSearchResults(urlsData) {
+            const container = document.getElementById('deep-results-container');
+            
+            let html = `
+            <div style="margin-top: 25px; text-align: center;">
+                <button id="toggle-sources-btn" style="background: var(--bg-card); border: 1px solid var(--accent); color: var(--accent); width: 100%; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s ease;" onclick="toggleSourcesList()">
+                    <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    View Extracted Sources (${urlsData.length})
+                </button>
+            </div>
+            <div id="sources-list-wrapper" style="display: none; margin-top: 15px; animation: fadeIn 0.3s ease;">`;
+
+            urlsData.forEach(item => {
+                let title = item.title || item;
+                let url = item.url || item;
+                let snippet = item.snippet || 'Click to extract content and media from this source...';
+                
+                html += `
+                <div style="margin-bottom: 15px; background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 8px; border-left: 3px solid var(--accent);">
+                    <a href="${url}" onclick="event.preventDefault(); openArticleView('${url}')" style="color:var(--accent); text-decoration:none; font-weight:bold; font-size:1.05rem; display:block; margin-bottom:6px;">${title}</a>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5; margin-bottom: 6px;">${snippet.substring(0, 160)}...</p>
+                    <div class="url" style="color:var(--text-muted); font-size:0.75rem; word-break:break-all;">${url}</div>
+                </div>`;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+            container.style.display = 'block';
+        }
+
+        function toggleSourcesList() {
+            const wrapper = document.getElementById('sources-list-wrapper');
+            if(wrapper.style.display === 'none') wrapper.style.display = 'block';
+            else wrapper.style.display = 'none';
         }
 
         async function executeDeepSearch() {
             const query = document.getElementById('deep-input-field').value.trim();
             if (!query) return;
+
+            // UI Reset
+            document.getElementById('terminal-view').style.display = 'block';
+            document.getElementById('terminal-view').innerHTML = '';
+            document.getElementById('synthesis-result').style.display = 'none';
+            document.getElementById('synthesis-result').innerHTML = '';
+            document.getElementById('deep-results-container').style.display = 'none';
+            document.getElementById('deep-results-container').innerHTML = '';
+            document.getElementById('script-editor-section').style.display = 'none';
+            document.getElementById('generate-script-btn').style.display = 'none';
             
-            const term = document.getElementById('terminal-view');
-            term.style.display = 'block';
-            term.innerHTML = `<div class="terminal-line"><span style="color:var(--accent)">></span> Starting deep AI scan for: ${query}...</div>`;
-            
+            const searchBtn = document.getElementById('deep-search-btn');
+            searchBtn.innerHTML = scanAnimatedSvg;
+            searchBtn.disabled = true;
+            document.getElementById('run-bg-btn').style.display = 'flex'; 
+
+            localStorage.removeItem('sparkTerminalHtml');
+            renderedLogsCount = 0;
+            currentViewedTaskId = null;
+
+            addTerminalLog("Dispatching task to backend workers...", "var(--accent)");
+
             try {
-                const response = await fetchAPI('/api/research/start', { query: query });
+                // ⚡ Using fetchWithAuth
+                const response = await fetchWithAuth('/api/research/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
                 const data = await response.json();
+                
                 if (data.task_id) {
-                    term.innerHTML += `<div class="terminal-line"><span style="color:var(--success)">></span> Task ID Generated: ${data.task_id} (Check History tab for results)</div>`;
+                    addTerminalLog(`Task Assigned ID: ${data.task_id}`, "var(--text-muted)");
+                    currentViewedTaskId = data.task_id;
+                    
+                    activeTasks[data.task_id] = { query: query, time: Date.now() };
+                    localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
+                    
+                    initGlobalPoller();
+                    pollActiveTasks(); 
+                } else {
+                    throw new Error("No Task ID returned from server.");
                 }
             } catch (err) {
-                term.innerHTML += `<div class="terminal-line"><span style="color:var(--danger)">></span> ERROR: ${err.message}</div>`;
+                if (!navigator.onLine) addTerminalLog("Connection lost. Results safely stored.", "var(--danger)");
+                else addTerminalLog(`FATAL ERROR: ${err.message}`, "var(--danger)");
+                
+                searchBtn.innerHTML = scanStaticSvg;
+                searchBtn.disabled = false;
+                document.getElementById('run-bg-btn').style.display = 'none';
             }
         }
 
+        // =========================================================================
+        // 📜 HISTORY PAGE LOGIC
+        // =========================================================================
         async function loadHistory() {
             const container = document.getElementById('history-container');
-            container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
+            container.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="spinner"></div></div>';
+            
             try {
-                const response = await fetch('/api/history', {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('sparkApiToken') || ''}` }
-                });
+                // ⚡ Using fetchWithAuth
+                const response = await fetchWithAuth('/api/history');
                 const data = await response.json();
+                
                 container.innerHTML = '';
-                if(data.history) {
-                    data.history.forEach(item => {
-                        container.innerHTML += `
-                            <div class="search-result">
-                                <div style="color:var(--accent); font-weight:bold;">${item.status.toUpperCase()}</div>
-                                <div class="title">${item.query}</div>
-                                <div style="color:var(--text-muted); font-size: 0.8rem;">Task ID: ${item.task_id}</div>
-                            </div>`;
-                    });
+                if (!data.history || data.history.length === 0) {
+                    container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">No history found.</p>';
+                    return;
                 }
+
+                data.history.forEach(item => {
+                    const date = new Date(item.created_at).toLocaleString();
+                    let statusColor = item.status === 'complete' ? 'var(--success)' : (item.status === 'failed' ? 'var(--danger)' : 'var(--warning)');
+                    let statusText = item.status === 'processing' ? 'IN PROGRESS (Live)' : item.status.toUpperCase();
+                    
+                    container.innerHTML += `
+                    <div class="search-result" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div class="url" style="color: ${statusColor}; font-weight:bold; margin-bottom:4px;">STATUS: ${statusText}</div>
+                            <div class="title" style="font-size: 1.1rem; color:var(--text-primary)">${item.query}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">${date}</div>
+                        </div>
+                        <button class="btn" onclick="openHistoryTask('${item.task_id}', '${item.query.replace(/'/g, "\\'")}')">Open</button>
+                    </div>`;
+                });
             } catch (err) {
-                container.innerHTML = `<p style="color:var(--danger)">Error loading history.</p>`;
+                container.innerHTML = `<p style="color:var(--danger);">Error loading history: ${err.message}</p>`;
             }
         }
+
+        async function openHistoryTask(taskId, query) {
+            document.getElementById('deep-input-field').value = query;
+            switchPage('page-deep-search'); 
+            
+            // UI Reset
+            document.getElementById('terminal-view').style.display = 'block';
+            document.getElementById('terminal-view').innerHTML = '';
+            document.getElementById('synthesis-result').style.display = 'none';
+            document.getElementById('synthesis-result').innerHTML = '';
+            document.getElementById('deep-results-container').style.display = 'none';
+            document.getElementById('deep-results-container').innerHTML = '';
+            document.getElementById('script-editor-section').style.display = 'none';
+            document.getElementById('generate-script-btn').style.display = 'none';
+
+            const searchBtn = document.getElementById('deep-search-btn');
+            searchBtn.innerHTML = scanAnimatedSvg;
+            searchBtn.disabled = true;
+            document.getElementById('run-bg-btn').style.display = 'none';
+            
+            renderedLogsCount = 0;
+            currentViewedTaskId = taskId;
+            
+            addTerminalLog(`Fetching Historical Data for Task ID: ${taskId}...`, "var(--accent)");
+            
+            try {
+                // ⚡ Using fetchWithAuth
+                const response = await fetchWithAuth(`/api/research/status/${taskId}`);
+                if (!response.ok) throw new Error("Task data not found on server.");
+                const data = await response.json();
+
+                updateDeepSearchUI(data);
+
+                if (data.status === 'processing' && !activeTasks[taskId]) {
+                    activeTasks[taskId] = { query: query, time: Date.now() };
+                    localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
+                    updateActiveTasksUI();
+                    document.getElementById('run-bg-btn').style.display = 'flex';
+                }
+            } catch (err) {
+                addTerminalLog(`❌ Fetch Error: ${err.message}`, "var(--danger)");
+                searchBtn.innerHTML = scanStaticSvg;
+                searchBtn.disabled = false;
+            }
+        }
+
+        // =========================================================================
+        // RENDERING & SCRIPT GEN 
+        // =========================================================================
+
+        function renderSynthesis(jsonData) {
+            const synthResult = document.getElementById('synthesis-result');
+            let html = '';
+
+            if (jsonData.lore_engine && jsonData.lore_engine.narrative_diamonds && jsonData.lore_engine.narrative_diamonds.length > 0) {
+                html += `<h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                            <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg> 
+                            Hidden Lore & Stories
+                        </h3>`;
+                jsonData.lore_engine.narrative_diamonds.forEach(story => {
+                    html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-left: 3px solid #FFD700; border-radius: 6px; margin-bottom: 12px;"><span style="background:#FFD700; color:black; font-size:0.7rem; font-weight:bold; padding:2px 6px; border-radius:4px;">${story.hook_type}</span><p style="color:var(--text-primary); font-size:0.95rem; margin-top:8px; line-height: 1.6;">${story.story_or_anecdote}</p></div>`;
+                });
+            }
+
+            const conflictData = jsonData.conflict_engine; 
+            if (conflictData) {
+                html += `<h3 style="color:var(--accent); margin-bottom:15px; margin-top:25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                            <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> 
+                            Knowledge Tension Report
+                        </h3>`;
+                if (conflictData.error) {
+                    html += `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 6px; color: var(--danger); margin-bottom: 20px;"><strong style="display:block; margin-bottom:5px;">⚠️ AI Error:</strong> <span style="font-family: monospace; font-size: 0.85rem;">${conflictData.error}</span></div>`;
+                } else {
+                    if (conflictData.core_synthesis) {
+                        html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--success); margin-bottom:5px;">Scientific Consensus</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${conflictData.core_synthesis.scientific_consensus}</p></div>`;
+                        html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--danger); margin-bottom:5px;">Alternative Claims</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${conflictData.core_synthesis.mythological_and_fringe_claims}</p></div>`;
+                    }
+                    if (conflictData.theory_conflict_engine && conflictData.theory_conflict_engine.length > 0) {
+                        html += `<h4 style="color:var(--accent); margin-bottom:10px; margin-top:20px;">⚡ Key Conflicts Detected</h4>`;
+                        conflictData.theory_conflict_engine.forEach(conflict => {
+                            html += `<div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--accent); border-radius: 6px; margin-bottom: 10px;"><p style="color:var(--text-primary); font-weight:bold; margin-bottom: 8px;">Debate: ${conflict.debate_topic}</p><p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom: 4px;"><strong>Science:</strong> ${conflict.science_perspective}</p><p style="color:var(--text-secondary); font-size:0.85rem;"><strong>Alternative:</strong> ${conflict.alternative_perspective}</p><div style="margin-top: 8px; font-size: 0.8rem; color:var(--text-muted);">Tension Level: <span style="color:${conflict.tension_level === 'High' ? 'var(--danger)' : 'var(--accent)'}">${conflict.tension_level}</span></div></div>`;
+                        });
+                    }
+                }
+            }
+
+            synthResult.innerHTML = html;
+            synthResult.style.display = 'block';
+
+            currentResearchData = jsonData;
+            document.getElementById('generate-script-btn').style.display = 'flex';
+        }
+
+        async function generateScriptFromData() {
+            const query = document.getElementById('deep-input-field').value.trim() || "Research Topic";
+            const btn = document.getElementById('generate-script-btn');
+            
+            const originalBtnHtml = `<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;margin-right:8px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Write Script by AI`;
+            
+            btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;margin-right:8px;"></div> Drafting Thrilling Script...`;
+            btn.disabled = true;
+
+            try {
+                addTerminalLog("AI Script Writer is drafting the narrative...", "var(--accent)", true);
+                
+                // ⚡ Using fetchWithAuth
+                const response = await fetchWithAuth('/api/generate-script', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query, research_data: currentResearchData })
+                });
+                
+                if (!response.ok) throw new Error(`Server Error (${response.status})`);
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                
+                document.getElementById('script-editor-section').style.display = 'block';
+                document.getElementById('final-script-box').value = data.script;
+                btn.style.display = 'none'; 
+                addTerminalLog("✅ AI Script Writer finished drafting the narrative.", "var(--success)");
+            } catch (err) {
+                console.error("Script Error:", err);
+                alert("Error generating script: " + err.message);
+                addTerminalLog(`❌ Script Error: ${err.message}`, "var(--danger)");
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+            }
+        }
+
+        async function dispatchToVideoCreator() {
+            const finalScript = document.getElementById('final-script-box').value.trim();
+            const query = document.getElementById('deep-input-field').value.trim();
+            const orientation = document.getElementById('video-orientation').value;
+            
+            if (!finalScript) return alert("Script is empty!");
+
+            try {
+                addTerminalLog(`Dispatching script to Vidspark API (${orientation} mode)...`, "var(--accent)", true);
+                // ⚡ Using fetchWithAuth
+                const response = await fetchWithAuth('/api/dispatch-to-creator', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ script_text: finalScript, topic: query, orientation: orientation })
+                });
+                const data = await response.json();
+                
+                if (response.ok && data.status === "success") {
+                    addTerminalLog(`✅ Mission Accomplished! Task ID: ${data.task_id}`, "var(--success)");
+                    addTerminalLog(`Vidspark API Message: ${data.message}`, "var(--text-primary)");
+                    alert("Script successfully sent to your Vidspark App!");
+                } else {
+                    addTerminalLog(`❌ API Error: ${data.error}`, "var(--danger)");
+                    alert("Failed to send script: " + data.error);
+                }
+            } catch (err) {
+                addTerminalLog("Failed to dispatch script. Network issue.", "var(--danger)");
+            }
+        }
+
+        async function openArticleView(url) {
+            const overlay = document.getElementById('article-overlay');
+            const contentDiv = document.getElementById('article-pro-content');
+            document.getElementById('article-source-url').innerText = `${url}`;
+            overlay.style.display = 'flex';
+            history.pushState({ modal: 'article' }, "", `#article`);
+
+            contentDiv.innerHTML = `<div style="text-align:center; padding: 60px; color:var(--text-secondary)"><div class="spinner" style="margin: 0 auto 15px auto;"></div>Bypassing firewalls & extracting content...</div>`;
+
+            try {
+                let data;
+                if (extractionCache[url]) {
+                    data = extractionCache[url];
+                } else {
+                    // ⚡ Using fetchWithAuth
+                    const response = await fetchWithAuth('/api/extract', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url })
+                    });
+                    data = await response.json();
+                    if(!data.error) extractionCache[url] = data;
+                }
+
+                if(data.error) {
+                    contentDiv.innerHTML = `<h3 style="color:var(--danger)">Extraction Failed</h3><p>${data.error}</p>`;
+                    return;
+                }
+
+                if(data.images || data.videos) processExtractedMedia(data.images, data.videos);
+
+                let html = ``;
+                if (data.videos && data.videos.length > 0) {
+                    const v = data.videos[0];
+                    if (v.includes('.mp4') || v.includes('.webm')) html += `<video class="embedded-media" controls><source src="${v}"></video>`;
+                    else html += `<iframe class="embedded-media" style="aspect-ratio: 16/9;" src="${v}" frameborder="0" allowfullscreen></iframe>`;
+                }
+
+                let paragraphs = data.text.split('<br><br>');
+                let imgIndex = 0;
+                paragraphs.forEach((p, i) => {
+                    if(p.trim().length > 0) html += `<p>${p}</p>`;
+                    if (i > 0 && i % 2 === 0 && data.images && imgIndex < data.images.length) {
+                        html += `<img src="${data.images[imgIndex]}" class="embedded-media" loading="lazy">`;
+                        imgIndex++;
+                    }
+                });
+                contentDiv.innerHTML = html;
+            } catch(err) {
+                contentDiv.innerHTML = `<h3 style="color:var(--danger)">Network Error</h3><p>${err.message}</p>`;
+            }
+        }
+
+        window.addEventListener('popstate', (e) => {
+            if (!e.state || e.state.modal !== 'article') document.getElementById('article-overlay').style.display = 'none';
+        });
+
+        function closeArticleView() {
+            document.getElementById('article-overlay').style.display = 'none';
+            if(history.state && history.state.modal === 'article') history.back();
+        }
+
+        // --- Media Filter & Sequential Loading Logic ---
+        function isJunkMedia(url) {
+            if(!url) return true;
+            const lowerUrl = url.toLowerCase();
+            if (lowerUrl.includes('/user/') && (lowerUrl.includes('48x48') || lowerUrl.includes('96x96') || lowerUrl.includes('32x32'))) return true;
+            if (lowerUrl.match(/_(32|48|64|96)x\d+\.(jpg|png|webp|gif)$/i)) return true;
+            if (lowerUrl.includes('avatar') || lowerUrl.includes('profile')) return true;
+            if (lowerUrl.includes('logo') && (lowerUrl.includes('small') || lowerUrl.includes('icon'))) return true;
+            return false;
+        }
+
+        async function startSequentialMediaLoading() {
+            if (isExtractingMedia || mediaProcessedIndex >= pendingMediaUrls.length) return;
+            isExtractingMedia = true;
+            const statusDiv = document.getElementById('media-status');
+            const statusText = document.getElementById('media-status-text');
+            statusDiv.style.display = 'flex';
+
+            while (mediaProcessedIndex < pendingMediaUrls.length) {
+                if(!document.getElementById('page-media').classList.contains('active')){
+                    isExtractingMedia = false;
+                    statusDiv.style.display = 'none';
+                    return;
+                }
+
+                let url = pendingMediaUrls[mediaProcessedIndex];
+                statusText.innerText = `Extracting visual assets from: ${url.substring(0,35)}...`;
+
+                try {
+                    let data;
+                    if(extractionCache[url]) {
+                        data = extractionCache[url];
+                    } else {
+                        // ⚡ Using fetchWithAuth
+                        const res = await fetchWithAuth('/api/extract', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({url: url})
+                        });
+                        data = await res.json();
+                        if(!data.error) extractionCache[url] = data;
+                    }
+                    if(data && !data.error) {
+                        processExtractedMedia(data.images, data.videos);
+                    }
+                } catch(e) {
+                    console.error("Media load error for", url);
+                }
+                mediaProcessedIndex++;
+                await new Promise(r => setTimeout(r, 1500));
+            }
+            isExtractingMedia = false;
+            statusDiv.style.display = 'none';
+        }
+
+        function processExtractedMedia(images, videos) {
+            let addedNew = false;
+            if(images) {
+                images.forEach(url => {
+                    if(!globalMedia.some(m => m.url === url)) {
+                        globalMedia.push({ type: 'image', url: url, isJunk: isJunkMedia(url) });
+                        addedNew = true;
+                    }
+                });
+            }
+            if(videos) {
+                videos.forEach(url => {
+                    if(!globalMedia.some(m => m.url === url)) {
+                        globalMedia.push({ type: 'video', url: url, isJunk: false });
+                        addedNew = true;
+                    }
+                });
+            }
+            if(addedNew && document.getElementById('page-media').classList.contains('active')) {
+                renderMediaGrid();
+            }
+        }
+
+        function toggleJunkMedia() { renderMediaGrid(); }
+        function filterMediaType(type) { currentMediaTypeFilter = type; renderMediaGrid(); }
+
+        function renderMediaGrid() {
+            const grid = document.getElementById('media-grid');
+            const hideJunk = document.getElementById('filter-junk-btn').checked;
+            grid.innerHTML = '';
+
+            let filteredMedia = globalMedia.filter(m => {
+                if(currentMediaTypeFilter !== 'all' && m.type !== currentMediaTypeFilter) return false;
+                if(hideJunk && m.isJunk) return false;
+                return true;
+            });
+
+            if (filteredMedia.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.95rem; grid-column: 1/-1; text-align: center; padding: 20px;">No matching media found.</p>';
+                return;
+            }
+
+            filteredMedia.forEach(m => {
+                const card = document.createElement('div');
+                card.className = `media-card ${m.isJunk ? 'junk-media' : ''}`;
+                let mediaHtml = '';
+                if (m.type === 'image') {
+                    mediaHtml = `<a href="${m.url}" target="_blank"><img src="${m.url}" loading="lazy"></a>`;
+                } else {
+                    if (m.url.includes('.mp4') || m.url.includes('.webm')) {
+                        mediaHtml = `<video controls><source src="${m.url}"></video>`;
+                    } else {
+                        mediaHtml = `<iframe src="${m.url}" style="width:100%; height:130px; border:none;"></iframe>`;
+                    }
+                }
+                card.innerHTML = `<div class="junk-badge">JUNK</div>${mediaHtml}`;
+                grid.appendChild(card);
+            });
+        }
+
+        function executeMediaScrape() {
+            const urlInput = document.getElementById('media-url-input');
+            const url = urlInput.value.trim();
+            if (!url) return;
+            if (!/^(https?:\/\/)/i.test(url)) {
+                alert("Please enter a valid HTTP/HTTPS URL.");
+                return;
+            }
+            if(!pendingMediaUrls.includes(url)) pendingMediaUrls.push(url);
+            urlInput.value = ''; 
+            startSequentialMediaLoading();
+        }
+
+        // Start Global Poller at boot
+        initGlobalPoller();
     </script>
 </body>
 </html>
