@@ -13,9 +13,7 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1164/1164954.png">
 
     <style>
-        /* ==========================================
-           1. CSS Variables (Professional Theme)
-           ========================================== */
+        /* CSS Variables */
         :root {
             --bg-deep: #030712;
             --bg-surface: rgba(11, 17, 32, 0.85);
@@ -35,37 +33,30 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-
         body { background-color: var(--bg-deep); color: var(--text-primary); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-deep); }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-        /* ==========================================
-           2. Mobile Header & Sidebar
-           ========================================== */
+        /* Mobile Header & Sidebar */
         #mobile-header { display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 16px 20px; border-bottom: 1px solid var(--border-color); z-index: 20; }
         .menu-btn { background: none; border: none; color: var(--text-primary); cursor: pointer; transition: var(--transition-fast); }
         .menu-btn:active { transform: scale(0.9); }
         .menu-btn svg { width: 26px; height: 26px; fill: currentColor; }
-
         .mobile-brand { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
         .mobile-brand span { color: var(--accent); }
 
         #sidebar { position: fixed; top: 0; left: -100%; width: var(--nav-width); height: 100vh; background-color: #0B1120; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; z-index: 1000; transition: var(--transition-fast); box-shadow: 5px 0 25px rgba(0,0,0,0.5); }
         #sidebar.open { left: 0; }
-
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 999; display: none; opacity: 0; transition: var(--transition-fast); }
         .sidebar-overlay.open { display: block; opacity: 1; }
-
+        
         .brand { padding: 0 24px 24px 24px; font-size: 1.3rem; font-weight: 700; color: var(--text-primary); border-bottom: 1px solid var(--border-color); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
         .brand span { color: var(--accent); }
-
         .close-sidebar { background: none; border: none; color: var(--text-secondary); cursor: pointer; display: block; transition: var(--transition-fast); }
         .close-sidebar:hover { color: var(--danger); }
-
+        
         .nav-item { padding: 14px 24px; display: flex; align-items: center; gap: 14px; color: var(--text-secondary); text-decoration: none; cursor: pointer; transition: var(--transition-fast); font-weight: 500; font-size: 0.95rem; }
         .nav-item:hover, .nav-item.active { background-color: var(--bg-card); color: var(--accent); }
         .nav-item.active { border-right: 3px solid var(--accent); background-color: var(--accent-dim); }
@@ -73,27 +64,20 @@
 
         #main-content { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-deep); overflow-y: auto; scroll-behavior: smooth; }
 
-        /* ==========================================
-           3. Pages & Stylish Heading
-           ========================================== */
+        /* Pages */
         .page { display: none; padding: 25px 20px; max-width: 1000px; margin: 0 auto; width: 100%; animation: fadeIn 0.3s ease forwards; }
         .page.active { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .spark-heading { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); margin-bottom: 25px; text-align: center; }
         .spark-heading span { color: var(--accent); }
-
         .page-header h2 { font-size: 1.4rem; color: var(--text-primary); margin-bottom: 5px; font-weight: 600; }
         .page-header p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; }
 
-        /* Settings Card */
         .settings-card { background: var(--bg-card); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
         .settings-card label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.9rem; }
 
-        /* ==========================================
-           4. Search Bar & Quick Actions
-           ========================================== */
+        /* Inputs & Buttons */
         .search-box-container { position: relative; width: 100%; margin-bottom: 12px; display: flex; gap: 10px; }
         .smart-input { width: 100%; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px 50px 16px 20px; color: var(--text-primary); font-size: 1rem; outline: none; transition: var(--transition-fast); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); flex: 1; }
         .smart-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim), 0 4px 15px rgba(0,0,0,0.3); background-color: #151d2e; }
@@ -114,9 +98,6 @@
         .quick-action-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
         .quick-action-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-        /* ==========================================
-           5. Loader, Results & Media System
-           ========================================== */
         #global-loader { display: none; align-items: center; justify-content: center; padding: 15px; color: var(--accent); font-weight: 500; font-size: 0.9rem; gap: 10px; text-align: center; }
         .spinner { width: 18px; height: 18px; border: 2px solid var(--accent-dim); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -153,9 +134,6 @@
         .junk-badge { position: absolute; top: 6px; right: 6px; background: rgba(239, 68, 68, 0.9); color: white; font-size: 0.6rem; font-weight: bold; padding: 3px 6px; border-radius: 4px; display: none; z-index: 10; backdrop-filter: blur(2px); }
         .media-card.junk-media .junk-badge { display: block; }
 
-        /* ==========================================
-           6. Article Overlay & Terminal
-           ========================================== */
         #article-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-deep); z-index: 2000; display: none; flex-direction: column; animation: fadeIn 0.2s ease; }
         .article-header { background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .article-header .source-url { color: var(--text-secondary); font-family: monospace; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
@@ -215,13 +193,11 @@
         <a class="nav-item" data-target="page-media">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Media
         </a>
-        <!-- ⚡ Added Settings Tab -->
         <a class="nav-item" data-target="page-settings">
             <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Settings
         </a>
     </nav>
 
-    <!-- ⚡ Active Tasks Widget -->
     <div id="active-tasks-widget" onclick="navigateTo('page-history'); loadHistory();">
         <div class="spinner" style="border-top-color: white; border-width: 2px;"></div>
         <span id="active-task-count">1 Running</span>
@@ -270,16 +246,11 @@
                 </button>
             </div>
             
-            <!-- 1. Terminal View -->
             <div id="terminal-view" class="terminal-container" style="display: none;"></div>
             
-            <!-- 2. Synthesis Result (Knowledge Tension & Lore) -->
             <div id="synthesis-result" class="synthesis-card"></div>
-
-            <!-- 3. Google Style Scanned Sources Container (View Sources Button will load here) -->
             <div id="deep-results-container" class="results-container"></div>
 
-            <!-- 4. Script Editor & Video Creator -->
             <div id="script-editor-section" style="display: none; margin-top: 30px; animation: fadeIn 0.4s ease;">
                 <h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                     <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> 
@@ -300,7 +271,6 @@
                 </div>
             </div>
             
-            <!-- Generate Script Trigger Button -->
             <button id="generate-script-btn" class="btn-synth" onclick="generateScriptFromData()" style="margin-top: 25px; display: none;">
                 <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 Write Script by AI
@@ -350,7 +320,6 @@
             </div>
         </section>
 
-        <!-- ⚡ SETTINGS PAGE (Added back) -->
         <section id="page-settings" class="page">
             <div class="page-header">
                 <h2>Settings</h2>
@@ -385,42 +354,30 @@
     </div>
 
     <script>
-        // ==========================================
-        // ⚡ Service Worker Registration (PWA)
-        // ==========================================
+        // ⚡ PWA Setup
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('Service Worker Registered!', reg))
-                .catch(err => console.error('Service Worker Error', err));
+                navigator.serviceWorker.register('/service-worker.js').catch(err => console.error('SW Error', err));
             });
         }
-
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
+            e.preventDefault(); deferredPrompt = e;
             const installBtn = document.getElementById('install-pwa-btn');
             const pwaStatus = document.getElementById('pwa-status');
             if(installBtn) {
-                installBtn.style.display = 'inline-flex';
-                pwaStatus.style.display = 'none';
+                installBtn.style.display = 'inline-flex'; pwaStatus.style.display = 'none';
                 installBtn.addEventListener('click', () => {
                     deferredPrompt.prompt();
                     deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') { console.log('User accepted PWA prompt'); }
-                        deferredPrompt = null;
-                        installBtn.style.display = 'none';
-                        pwaStatus.style.display = 'block';
-                        pwaStatus.innerText = "App installed successfully!";
+                        deferredPrompt = null; installBtn.style.display = 'none';
+                        pwaStatus.style.display = 'block'; pwaStatus.innerText = "App installed successfully!";
                     });
                 });
             }
         });
 
-        // ==========================================
-        // ⚡ API Key Saving Logic & Fetch Wrapper
-        // ==========================================
+        // ⚡ Auth Logic
         function saveApiKey() {
             const key = document.getElementById('api-key-input').value.trim();
             localStorage.setItem('sparkApiToken', key);
@@ -428,13 +385,11 @@
             status.style.display = 'block';
             setTimeout(() => status.style.display = 'none', 3000);
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('sparkApiToken');
             if(savedKey) document.getElementById('api-key-input').value = savedKey;
         });
 
-        // Universal wrapper to inject auth token securely into all API calls
         async function fetchWithAuth(url, options = {}) {
             const token = localStorage.getItem('sparkApiToken') || '';
             options.headers = options.headers || {};
@@ -442,8 +397,7 @@
             return await fetch(url, options);
         }
 
-
-        // --- System States & Caching ---
+        // --- System States ---
         let currentResearchData = null; 
         let globalMedia = [];
         let currentMediaTypeFilter = 'all';
@@ -452,7 +406,7 @@
         let mediaProcessedIndex = 0;
         let isExtractingMedia = false;
 
-        // --- Navigation & Page Switch ---
+        // --- Navigation ---
         function switchPage(targetId, pushToHistory = true) {
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             const targetNav = document.querySelector(`.nav-item[data-target="${targetId}"]`);
@@ -461,66 +415,36 @@
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
 
-            if (pushToHistory) {
-                history.pushState({ page: targetId }, "", `#${targetId}`);
-            }
-
-            // Auto-Extract Media When Entering Media Page
-            if(targetId === 'page-media') {
-                startSequentialMediaLoading();
-            }
+            if (pushToHistory) history.pushState({ page: targetId }, "", `#${targetId}`);
         }
 
         window.addEventListener('popstate', (e) => {
             if (e.state && e.state.page) switchPage(e.state.page, false);
             else switchPage('page-search', false);
         });
-
         history.replaceState({ page: 'page-search' }, "", "#page-search");
         function navigateTo(pageId) { switchPage(pageId); }
-        function navigateToMedia(type) {
-            currentMediaTypeFilter = type;
-            switchPage('page-media');
-            renderMediaGrid();
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebar-overlay').classList.toggle('open');
-        }
-
+        function navigateToMedia(type) { currentMediaTypeFilter = type; switchPage('page-media'); renderMediaGrid(); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); }
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function() {
-                if(window.innerWidth < 768 && document.getElementById('sidebar').classList.contains('open')) {
-                    toggleSidebar();
-                }
-                const targetId = this.getAttribute('data-target');
-                switchPage(targetId);
+                if(window.innerWidth < 768 && document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
+                switchPage(this.getAttribute('data-target'));
             });
         });
 
-        // --- Terminal & Offline Logic ---
-        function saveTerminalState() {
-            const term = document.getElementById('terminal-view');
-            localStorage.setItem('sparkTerminalHtml', term.innerHTML);
-        }
-
+        // --- Terminal ---
+        function saveTerminalState() { localStorage.setItem('sparkTerminalHtml', document.getElementById('terminal-view').innerHTML); }
         function restoreTerminalState() {
             const savedHtml = localStorage.getItem('sparkTerminalHtml');
             if (savedHtml) {
                 const term = document.getElementById('terminal-view');
-                term.style.display = 'block';
-                term.innerHTML = savedHtml;
-                term.scrollTop = term.scrollHeight;
+                term.style.display = 'block'; term.innerHTML = savedHtml; term.scrollTop = term.scrollHeight;
             }
         }
-
         document.addEventListener('DOMContentLoaded', restoreTerminalState);
-        window.addEventListener('offline', () => addTerminalLog("⚠️ INTERNET DISCONNECTED. State saved. Retries paused.", "var(--danger)"));
-        window.addEventListener('online', () => {
-            addTerminalLog("🌐 INTERNET RESTORED. System online.", "var(--success)");
-            pollActiveTasks();
-        });
+        window.addEventListener('offline', () => addTerminalLog("⚠️ INTERNET DISCONNECTED. Retries paused.", "var(--danger)"));
+        window.addEventListener('online', () => { addTerminalLog("🌐 INTERNET RESTORED.", "var(--success)"); pollActiveTasks(); });
 
         let processingNode = null;
         function addTerminalLog(msg, color="var(--text-secondary)", isProcessing=false) {
@@ -535,9 +459,7 @@
                 line.innerHTML = `<span style="color:${color}">></span> <span style="color:${color}">${msg}</span>`;
                 processingNode = null;
             }
-            term.appendChild(line);
-            term.scrollTop = term.scrollHeight;
-            saveTerminalState();
+            term.appendChild(line); term.scrollTop = term.scrollHeight; saveTerminalState();
         }
 
         function handleEnter(e, inputId) {
@@ -547,652 +469,332 @@
                 if (inputId === 'media-url-input') executeMediaScrape();
             }
         }
+        function showLoader(text, show) { document.getElementById('loader-text').innerText = text; document.getElementById('global-loader').style.display = show ? 'flex' : 'none'; }
 
-        function showLoader(text, show) {
-            const loader = document.getElementById('global-loader');
-            document.getElementById('loader-text').innerText = text;
-            loader.style.display = show ? 'flex' : 'none';
-        }
-
-        // --- Core Fast Search ---
+        // --- Fast Search ---
         async function executeSmartInput() {
             const input = document.getElementById('smart-input-field').value.trim();
             if (!input) return;
-            const isUrl = /^(https?:\/\/)/i.test(input);
-            if (isUrl) {
+            if (/^(https?:\/\/)/i.test(input)) {
                 if(!pendingMediaUrls.includes(input)) pendingMediaUrls.push(input);
                 openArticleView(input);
-            } else {
-                performFastSearch(input);
-            }
+            } else performFastSearch(input);
         }
 
         async function performFastSearch(query) {
-            const container = document.getElementById('search-results-container');
-            container.innerHTML = '';
+            const container = document.getElementById('search-results-container'); container.innerHTML = '';
             showLoader("Loading from database...", true);
             try {
-                // ⚡ Using fetchWithAuth wrapper here
-                const response = await fetchWithAuth('/api/fast-search', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query, threshold: 0.7 })
-                });
-                const data = await response.json();
-                showLoader("", false);
+                const response = await fetchWithAuth('/api/fast-search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query, threshold: 0.7 }) });
+                const data = await response.json(); showLoader("", false);
                 if (data.results && data.results.length > 0) {
-                    const newUrls = data.results.map(r => r.url);
-                    newUrls.forEach(u => {
-                        if(!pendingMediaUrls.includes(u)) pendingMediaUrls.push(u); // Feed into media queue
-                    });
                     data.results.forEach(res => {
-                        const div = document.createElement('div');
-                        div.className = 'search-result';
-                        div.innerHTML = `
-                            <div class="url">
-                                <svg width="14" height="14" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-                                ${res.url}
-                            </div>
-                            <a href="#" class="title" onclick="event.preventDefault(); openArticleView('${res.url}')">${res.title}</a>
-                            <div class="snippet">${res.snippet}...</div>
-                        `;
-                        container.appendChild(div);
+                        if(!pendingMediaUrls.includes(res.url)) pendingMediaUrls.push(res.url);
+                        container.innerHTML += `
+                            <div class="search-result">
+                                <div class="url"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg> ${res.url}</div>
+                                <a href="#" class="title" onclick="event.preventDefault(); openArticleView('${res.url}')">${res.title}</a>
+                                <div class="snippet">${res.snippet}...</div>
+                            </div>`;
                     });
-                } else {
-                    container.innerHTML = '<p style="color:var(--text-secondary)">No results found.</p>';
-                }
-            } catch (err) {
-                showLoader("", false);
-                container.innerHTML = `<p style="color:var(--danger)">Error: ${err.message}</p>`;
-            }
+                } else container.innerHTML = '<p style="color:var(--text-secondary)">No results found.</p>';
+            } catch (err) { showLoader("", false); container.innerHTML = `<p style="color:var(--danger)">Error: ${err.message}</p>`; }
         }
 
-        // =========================================================================
-        // 🚀 POLLING & BACKGROUND TASK LOGIC
-        // =========================================================================
-
+        // --- POLLING & DEEP SEARCH ---
         let activeTasks = JSON.parse(localStorage.getItem('sparkActiveTasks')) || {};
-        let currentViewedTaskId = null;
-        let renderedLogsCount = 0;
-        let globalPoller = null;
-
+        let currentViewedTaskId = null; let renderedLogsCount = 0; let globalPoller = null;
         const scanStaticSvg = `<svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
-        const scanAnimatedSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" opacity="0.5"/>
-            <polyline points="14 2 14 8 20 8" opacity="0.5"/>
-            <g style="animation: scanMove 1.2s ease-in-out infinite alternate;">
-                <circle cx="11" cy="14" r="4" stroke="var(--accent)"/>
-                <line x1="13.8" y1="16.8" x2="18" y2="21" stroke="var(--accent)"/>
-            </g>
-        </svg>`;
+        const scanAnimatedSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" opacity="0.5"/><polyline points="14 2 14 8 20 8" opacity="0.5"/><g style="animation: scanMove 1.2s ease-in-out infinite alternate;"><circle cx="11" cy="14" r="4" stroke="var(--accent)"/><line x1="13.8" y1="16.8" x2="18" y2="21" stroke="var(--accent)"/></g></svg>`;
 
-        function initGlobalPoller() {
-            updateActiveTasksUI();
-            if(!globalPoller) {
-                globalPoller = setInterval(pollActiveTasks, 3000); 
-            }
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') pollActiveTasks();
-        });
+        function initGlobalPoller() { updateActiveTasksUI(); if(!globalPoller) globalPoller = setInterval(pollActiveTasks, 3000); }
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pollActiveTasks(); });
 
         async function pollActiveTasks() {
-            const taskIds = Object.keys(activeTasks);
-            if(taskIds.length === 0) return;
-
+            const taskIds = Object.keys(activeTasks); if(taskIds.length === 0) return;
             for (const taskId of taskIds) {
                 try {
-                    // ⚡ Using fetchWithAuth
                     const response = await fetchWithAuth(`/api/research/status/${taskId}`);
                     if (!response.ok) continue;
                     const data = await response.json();
-
-                    if (taskId === currentViewedTaskId && document.getElementById('page-deep-search').classList.contains('active')) {
-                        updateDeepSearchUI(data);
-                    }
-
-                    if (data.status === 'complete' || data.status === 'failed') {
-                        delete activeTasks[taskId];
-                        localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
-                        updateActiveTasksUI();
-                    }
-                } catch (e) {
-                    console.log(`Polling issue for ${taskId}, retrying...`);
-                }
+                    if (taskId === currentViewedTaskId && document.getElementById('page-deep-search').classList.contains('active')) updateDeepSearchUI(data);
+                    if (data.status === 'complete' || data.status === 'failed') { delete activeTasks[taskId]; localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks)); updateActiveTasksUI(); }
+                } catch (e) { }
             }
         }
 
         function updateActiveTasksUI() {
-            const count = Object.keys(activeTasks).length;
-            const widget = document.getElementById('active-tasks-widget');
-            if (count > 0) {
-                document.getElementById('active-task-count').innerText = `${count} Running Task${count>1?'s':''}`;
-                widget.style.display = 'flex';
-            } else {
-                widget.style.display = 'none';
-            }
+            const count = Object.keys(activeTasks).length; const widget = document.getElementById('active-tasks-widget');
+            if (count > 0) { document.getElementById('active-task-count').innerText = `${count} Running Task${count>1?'s':''}`; widget.style.display = 'flex'; } else widget.style.display = 'none';
         }
 
-        function sendTaskToBackground() {
-            navigateTo('page-search');
-            addTerminalLog("> Task shifted to background. Keep exploring!", "var(--success)");
-        }
+        function sendTaskToBackground() { navigateTo('page-search'); addTerminalLog("> Task shifted to background. Keep exploring!", "var(--success)"); }
 
+        // ⚡ FIXED: Aggressive Payload Extraction & Media Trigger
         function updateDeepSearchUI(data) {
             const searchBtn = document.getElementById('deep-search-btn');
             
             if (data.logs && data.logs.length > renderedLogsCount) {
                 for (let i = renderedLogsCount; i < data.logs.length; i++) {
                     const log = data.logs[i];
-                    const isProcessing = (data.status === 'processing' && i === data.logs.length - 1);
-                    addTerminalLog(log.msg, log.color || "var(--text-secondary)", isProcessing);
+                    addTerminalLog(log.msg, log.color || "var(--text-secondary)", (data.status === 'processing' && i === data.logs.length - 1));
                 }
                 renderedLogsCount = data.logs.length;
             }
 
-            if (data.status === 'complete' && !document.getElementById('synthesis-result').innerHTML) {
-                searchBtn.innerHTML = scanStaticSvg;
-                searchBtn.disabled = false;
-                document.getElementById('run-bg-btn').style.display = 'none';
-                
+            if (data.status === 'complete' && document.getElementById('synthesis-result').style.display !== 'block') {
+                searchBtn.innerHTML = scanStaticSvg; searchBtn.disabled = false; document.getElementById('run-bg-btn').style.display = 'none';
                 addTerminalLog("✅ Data safely retrieved from server.", "var(--success)", false);
 
-                const payload = data.result || data; 
-                
-                const synthesisData = payload.data || payload; 
+                // ⚡ Aggressively find the right JSON path
+                let payload = data.result || data; 
+                let synthesisData = payload.data || payload.synthesis || payload; 
+                let urlsData = payload.urls || payload.sources || (payload.data && payload.data.urls) || [];
+
                 renderSynthesis(synthesisData);
 
-                if (payload.urls && payload.urls.length > 0) {
-                    payload.urls.forEach(u => {
-                        let urlStr = u.url || u;
-                        if(!pendingMediaUrls.includes(urlStr)) pendingMediaUrls.push(urlStr); 
+                if (urlsData && urlsData.length > 0) {
+                    urlsData.forEach(u => {
+                        let urlStr = typeof u === 'string' ? u : (u.url || u.link);
+                        if(urlStr && typeof urlStr === 'string' && urlStr.startsWith('http')) {
+                            if(!pendingMediaUrls.includes(urlStr)) pendingMediaUrls.push(urlStr);
+                        }
                     });
-                    renderSearchResults(payload.urls);
+                    renderSearchResults(urlsData);
+                    
+                    // ⚡ Fix: Automatically trigger media scraping in the background
+                    startSequentialMediaLoading(); 
+                } else {
+                    const container = document.getElementById('deep-results-container');
+                    container.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">No readable sources extracted.</p>';
+                    container.style.display = 'block';
                 }
             } 
             else if (data.status === 'failed') {
-                searchBtn.innerHTML = scanStaticSvg;
-                searchBtn.disabled = false;
-                document.getElementById('run-bg-btn').style.display = 'none';
+                searchBtn.innerHTML = scanStaticSvg; searchBtn.disabled = false; document.getElementById('run-bg-btn').style.display = 'none';
                 addTerminalLog(`❌ Task Failed: ${data.error}`, "var(--danger)");
             }
         }
 
+        // ⚡ FIXED: Robust Sources Rendering
         function renderSearchResults(urlsData) {
             const container = document.getElementById('deep-results-container');
-            
-            let html = `
-            <div style="margin-top: 25px; text-align: center;">
-                <button id="toggle-sources-btn" style="background: var(--bg-card); border: 1px solid var(--accent); color: var(--accent); width: 100%; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s ease;" onclick="toggleSourcesList()">
-                    <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    View Extracted Sources (${urlsData.length})
-                </button>
-            </div>
-            <div id="sources-list-wrapper" style="display: none; margin-top: 15px; animation: fadeIn 0.3s ease;">`;
+            let html = `<div style="margin-top: 25px; text-align: center;"><button id="toggle-sources-btn" style="background: var(--bg-card); border: 1px solid var(--accent); color: var(--accent); width: 100%; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s ease;" onclick="toggleSourcesList()"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg> View Extracted Sources (${urlsData.length})</button></div><div id="sources-list-wrapper" style="display: none; margin-top: 15px; animation: fadeIn 0.3s ease;">`;
 
             urlsData.forEach(item => {
-                let title = item.title || item;
-                let url = item.url || item;
-                let snippet = item.snippet || 'Click to extract content and media from this source...';
-                
-                html += `
-                <div style="margin-bottom: 15px; background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 8px; border-left: 3px solid var(--accent);">
-                    <a href="${url}" onclick="event.preventDefault(); openArticleView('${url}')" style="color:var(--accent); text-decoration:none; font-weight:bold; font-size:1.05rem; display:block; margin-bottom:6px;">${title}</a>
-                    <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5; margin-bottom: 6px;">${snippet.substring(0, 160)}...</p>
-                    <div class="url" style="color:var(--text-muted); font-size:0.75rem; word-break:break-all;">${url}</div>
-                </div>`;
+                let title = item.title || "Source Link";
+                let url = item.url || item.link || (typeof item === 'string' ? item : null);
+                let snippet = item.snippet || 'Extracted document.';
+                if(!url) return;
+                html += `<div style="margin-bottom: 15px; background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 8px; border-left: 3px solid var(--accent);"><a href="${url}" onclick="event.preventDefault(); openArticleView('${url}')" style="color:var(--accent); text-decoration:none; font-weight:bold; font-size:1.05rem; display:block; margin-bottom:6px;">${title}</a><p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5; margin-bottom: 6px;">${snippet.substring(0, 160)}...</p><div class="url" style="color:var(--text-muted); font-size:0.75rem; word-break:break-all;">${url}</div></div>`;
             });
-
-            html += `</div>`;
-            container.innerHTML = html;
-            container.style.display = 'block';
+            html += `</div>`; container.innerHTML = html; container.style.display = 'block';
         }
-
-        function toggleSourcesList() {
-            const wrapper = document.getElementById('sources-list-wrapper');
-            if(wrapper.style.display === 'none') wrapper.style.display = 'block';
-            else wrapper.style.display = 'none';
-        }
+        function toggleSourcesList() { const w = document.getElementById('sources-list-wrapper'); w.style.display = w.style.display === 'none' ? 'block' : 'none'; }
 
         async function executeDeepSearch() {
-            const query = document.getElementById('deep-input-field').value.trim();
-            if (!query) return;
-
-            // UI Reset
-            document.getElementById('terminal-view').style.display = 'block';
-            document.getElementById('terminal-view').innerHTML = '';
-            document.getElementById('synthesis-result').style.display = 'none';
-            document.getElementById('synthesis-result').innerHTML = '';
-            document.getElementById('deep-results-container').style.display = 'none';
-            document.getElementById('deep-results-container').innerHTML = '';
-            document.getElementById('script-editor-section').style.display = 'none';
-            document.getElementById('generate-script-btn').style.display = 'none';
+            const query = document.getElementById('deep-input-field').value.trim(); if (!query) return;
             
-            const searchBtn = document.getElementById('deep-search-btn');
-            searchBtn.innerHTML = scanAnimatedSvg;
-            searchBtn.disabled = true;
+            document.getElementById('terminal-view').style.display = 'block'; document.getElementById('terminal-view').innerHTML = '';
+            document.getElementById('synthesis-result').style.display = 'none'; document.getElementById('synthesis-result').innerHTML = '';
+            document.getElementById('deep-results-container').style.display = 'none'; document.getElementById('deep-results-container').innerHTML = '';
+            document.getElementById('script-editor-section').style.display = 'none'; document.getElementById('generate-script-btn').style.display = 'none';
+            
+            const searchBtn = document.getElementById('deep-search-btn'); searchBtn.innerHTML = scanAnimatedSvg; searchBtn.disabled = true;
             document.getElementById('run-bg-btn').style.display = 'flex'; 
 
-            localStorage.removeItem('sparkTerminalHtml');
-            renderedLogsCount = 0;
-            currentViewedTaskId = null;
-
+            localStorage.removeItem('sparkTerminalHtml'); renderedLogsCount = 0; currentViewedTaskId = null;
             addTerminalLog("Dispatching task to backend workers...", "var(--accent)");
 
             try {
-                // ⚡ Using fetchWithAuth
-                const response = await fetchWithAuth('/api/research/start', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query })
-                });
+                const response = await fetchWithAuth('/api/research/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query }) });
                 const data = await response.json();
-                
                 if (data.task_id) {
-                    addTerminalLog(`Task Assigned ID: ${data.task_id}`, "var(--text-muted)");
-                    currentViewedTaskId = data.task_id;
-                    
-                    activeTasks[data.task_id] = { query: query, time: Date.now() };
-                    localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
-                    
-                    initGlobalPoller();
-                    pollActiveTasks(); 
-                } else {
-                    throw new Error("No Task ID returned from server.");
-                }
+                    addTerminalLog(`Task Assigned ID: ${data.task_id}`, "var(--text-muted)"); currentViewedTaskId = data.task_id;
+                    activeTasks[data.task_id] = { query: query, time: Date.now() }; localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
+                    initGlobalPoller(); pollActiveTasks(); 
+                } else throw new Error("No Task ID returned.");
             } catch (err) {
-                if (!navigator.onLine) addTerminalLog("Connection lost. Results safely stored.", "var(--danger)");
-                else addTerminalLog(`FATAL ERROR: ${err.message}`, "var(--danger)");
-                
-                searchBtn.innerHTML = scanStaticSvg;
-                searchBtn.disabled = false;
-                document.getElementById('run-bg-btn').style.display = 'none';
+                if (!navigator.onLine) addTerminalLog("Connection lost. Results safely stored.", "var(--danger)"); else addTerminalLog(`FATAL ERROR: ${err.message}`, "var(--danger)");
+                searchBtn.innerHTML = scanStaticSvg; searchBtn.disabled = false; document.getElementById('run-bg-btn').style.display = 'none';
             }
         }
 
-        // =========================================================================
-        // 📜 HISTORY PAGE LOGIC
-        // =========================================================================
+        // --- HISTORY ---
         async function loadHistory() {
-            const container = document.getElementById('history-container');
-            container.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="spinner"></div></div>';
-            
+            const container = document.getElementById('history-container'); container.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="spinner"></div></div>';
             try {
-                // ⚡ Using fetchWithAuth
-                const response = await fetchWithAuth('/api/history');
-                const data = await response.json();
-                
-                container.innerHTML = '';
-                if (!data.history || data.history.length === 0) {
-                    container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">No history found.</p>';
-                    return;
-                }
-
+                const response = await fetchWithAuth('/api/history'); const data = await response.json(); container.innerHTML = '';
+                if (!data.history || data.history.length === 0) return container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">No history found.</p>';
                 data.history.forEach(item => {
                     const date = new Date(item.created_at).toLocaleString();
                     let statusColor = item.status === 'complete' ? 'var(--success)' : (item.status === 'failed' ? 'var(--danger)' : 'var(--warning)');
-                    let statusText = item.status === 'processing' ? 'IN PROGRESS (Live)' : item.status.toUpperCase();
-                    
-                    container.innerHTML += `
-                    <div class="search-result" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <div class="url" style="color: ${statusColor}; font-weight:bold; margin-bottom:4px;">STATUS: ${statusText}</div>
-                            <div class="title" style="font-size: 1.1rem; color:var(--text-primary)">${item.query}</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">${date}</div>
-                        </div>
-                        <button class="btn" onclick="openHistoryTask('${item.task_id}', '${item.query.replace(/'/g, "\\'")}')">Open</button>
-                    </div>`;
+                    container.innerHTML += `<div class="search-result" style="display:flex; justify-content:space-between; align-items:center;"><div><div class="url" style="color: ${statusColor}; font-weight:bold; margin-bottom:4px;">STATUS: ${item.status.toUpperCase()}</div><div class="title" style="font-size: 1.1rem; color:var(--text-primary)">${item.query}</div><div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">${date}</div></div><button class="btn" onclick="openHistoryTask('${item.task_id}', '${item.query.replace(/'/g, "\\'")}')">Open</button></div>`;
                 });
-            } catch (err) {
-                container.innerHTML = `<p style="color:var(--danger);">Error loading history: ${err.message}</p>`;
-            }
+            } catch (err) { container.innerHTML = `<p style="color:var(--danger);">Error loading history: ${err.message}</p>`; }
         }
 
         async function openHistoryTask(taskId, query) {
-            document.getElementById('deep-input-field').value = query;
-            switchPage('page-deep-search'); 
-            
-            // UI Reset
-            document.getElementById('terminal-view').style.display = 'block';
-            document.getElementById('terminal-view').innerHTML = '';
-            document.getElementById('synthesis-result').style.display = 'none';
-            document.getElementById('synthesis-result').innerHTML = '';
-            document.getElementById('deep-results-container').style.display = 'none';
-            document.getElementById('deep-results-container').innerHTML = '';
-            document.getElementById('script-editor-section').style.display = 'none';
-            document.getElementById('generate-script-btn').style.display = 'none';
-
-            const searchBtn = document.getElementById('deep-search-btn');
-            searchBtn.innerHTML = scanAnimatedSvg;
-            searchBtn.disabled = true;
-            document.getElementById('run-bg-btn').style.display = 'none';
-            
-            renderedLogsCount = 0;
-            currentViewedTaskId = taskId;
-            
+            document.getElementById('deep-input-field').value = query; switchPage('page-deep-search'); 
+            document.getElementById('terminal-view').style.display = 'block'; document.getElementById('terminal-view').innerHTML = '';
+            document.getElementById('synthesis-result').style.display = 'none'; document.getElementById('synthesis-result').innerHTML = '';
+            document.getElementById('deep-results-container').style.display = 'none'; document.getElementById('deep-results-container').innerHTML = '';
+            document.getElementById('script-editor-section').style.display = 'none'; document.getElementById('generate-script-btn').style.display = 'none';
+            const searchBtn = document.getElementById('deep-search-btn'); searchBtn.innerHTML = scanAnimatedSvg; searchBtn.disabled = true; document.getElementById('run-bg-btn').style.display = 'none';
+            renderedLogsCount = 0; currentViewedTaskId = taskId;
             addTerminalLog(`Fetching Historical Data for Task ID: ${taskId}...`, "var(--accent)");
-            
             try {
-                // ⚡ Using fetchWithAuth
                 const response = await fetchWithAuth(`/api/research/status/${taskId}`);
-                if (!response.ok) throw new Error("Task data not found on server.");
-                const data = await response.json();
-
+                if (!response.ok) throw new Error("Task data not found."); const data = await response.json();
                 updateDeepSearchUI(data);
-
                 if (data.status === 'processing' && !activeTasks[taskId]) {
-                    activeTasks[taskId] = { query: query, time: Date.now() };
-                    localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
-                    updateActiveTasksUI();
-                    document.getElementById('run-bg-btn').style.display = 'flex';
+                    activeTasks[taskId] = { query: query, time: Date.now() }; localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks)); updateActiveTasksUI(); document.getElementById('run-bg-btn').style.display = 'flex';
                 }
-            } catch (err) {
-                addTerminalLog(`❌ Fetch Error: ${err.message}`, "var(--danger)");
-                searchBtn.innerHTML = scanStaticSvg;
-                searchBtn.disabled = false;
-            }
+            } catch (err) { addTerminalLog(`❌ Fetch Error: ${err.message}`, "var(--danger)"); searchBtn.innerHTML = scanStaticSvg; searchBtn.disabled = false; }
         }
 
-        // =========================================================================
-        // RENDERING & SCRIPT GEN 
-        // =========================================================================
-
+        // ⚡ FIXED: Fallback Raw JSON Rendering
         function renderSynthesis(jsonData) {
             const synthResult = document.getElementById('synthesis-result');
             let html = '';
 
-            if (jsonData.lore_engine && jsonData.lore_engine.narrative_diamonds && jsonData.lore_engine.narrative_diamonds.length > 0) {
-                html += `<h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-                            <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg> 
-                            Hidden Lore & Stories
-                        </h3>`;
-                jsonData.lore_engine.narrative_diamonds.forEach(story => {
-                    html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-left: 3px solid #FFD700; border-radius: 6px; margin-bottom: 12px;"><span style="background:#FFD700; color:black; font-size:0.7rem; font-weight:bold; padding:2px 6px; border-radius:4px;">${story.hook_type}</span><p style="color:var(--text-primary); font-size:0.95rem; margin-top:8px; line-height: 1.6;">${story.story_or_anecdote}</p></div>`;
-                });
+            let loreData = jsonData.lore_engine || jsonData.lore;
+            if (loreData && loreData.narrative_diamonds && loreData.narrative_diamonds.length > 0) {
+                html += `<h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg> Hidden Lore & Stories</h3>`;
+                loreData.narrative_diamonds.forEach(story => { html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-left: 3px solid #FFD700; border-radius: 6px; margin-bottom: 12px;"><span style="background:#FFD700; color:black; font-size:0.7rem; font-weight:bold; padding:2px 6px; border-radius:4px;">${story.hook_type}</span><p style="color:var(--text-primary); font-size:0.95rem; margin-top:8px; line-height: 1.6;">${story.story_or_anecdote}</p></div>`; });
             }
 
-            const conflictData = jsonData.conflict_engine; 
+            let conflictData = jsonData.conflict_engine || jsonData.conflicts;
             if (conflictData) {
-                html += `<h3 style="color:var(--accent); margin-bottom:15px; margin-top:25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-                            <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> 
-                            Knowledge Tension Report
-                        </h3>`;
-                if (conflictData.error) {
-                    html += `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 6px; color: var(--danger); margin-bottom: 20px;"><strong style="display:block; margin-bottom:5px;">⚠️ AI Error:</strong> <span style="font-family: monospace; font-size: 0.85rem;">${conflictData.error}</span></div>`;
-                } else {
+                html += `<h3 style="color:var(--accent); margin-bottom:15px; margin-top:25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Knowledge Tension Report</h3>`;
+                if (conflictData.error) html += `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 6px; color: var(--danger); margin-bottom: 20px;"><strong style="display:block; margin-bottom:5px;">⚠️ AI Error:</strong> <span style="font-family: monospace; font-size: 0.85rem;">${conflictData.error}</span></div>`;
+                else {
                     if (conflictData.core_synthesis) {
                         html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--success); margin-bottom:5px;">Scientific Consensus</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${conflictData.core_synthesis.scientific_consensus}</p></div>`;
                         html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--danger); margin-bottom:5px;">Alternative Claims</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${conflictData.core_synthesis.mythological_and_fringe_claims}</p></div>`;
                     }
                     if (conflictData.theory_conflict_engine && conflictData.theory_conflict_engine.length > 0) {
                         html += `<h4 style="color:var(--accent); margin-bottom:10px; margin-top:20px;">⚡ Key Conflicts Detected</h4>`;
-                        conflictData.theory_conflict_engine.forEach(conflict => {
-                            html += `<div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--accent); border-radius: 6px; margin-bottom: 10px;"><p style="color:var(--text-primary); font-weight:bold; margin-bottom: 8px;">Debate: ${conflict.debate_topic}</p><p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom: 4px;"><strong>Science:</strong> ${conflict.science_perspective}</p><p style="color:var(--text-secondary); font-size:0.85rem;"><strong>Alternative:</strong> ${conflict.alternative_perspective}</p><div style="margin-top: 8px; font-size: 0.8rem; color:var(--text-muted);">Tension Level: <span style="color:${conflict.tension_level === 'High' ? 'var(--danger)' : 'var(--accent)'}">${conflict.tension_level}</span></div></div>`;
-                        });
+                        conflictData.theory_conflict_engine.forEach(c => { html += `<div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--accent); border-radius: 6px; margin-bottom: 10px;"><p style="color:var(--text-primary); font-weight:bold; margin-bottom: 8px;">Debate: ${c.debate_topic}</p><p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom: 4px;"><strong>Science:</strong> ${c.science_perspective}</p><p style="color:var(--text-secondary); font-size:0.85rem;"><strong>Alternative:</strong> ${c.alternative_perspective}</p><div style="margin-top: 8px; font-size: 0.8rem; color:var(--text-muted);">Tension Level: <span style="color:${c.tension_level === 'High' ? 'var(--danger)' : 'var(--accent)'}">${c.tension_level}</span></div></div>`; });
                     }
                 }
+            } else if (Object.keys(jsonData).length > 0 && !loreData) {
+                // ⚡ NEW: Raw JSON Viewer if standard structure is missing
+                html += `<h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">AI Synthesis Report (Raw)</h3>`;
+                html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 6px; color:var(--text-primary); font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; font-family:monospace;">${typeof jsonData === 'string' ? jsonData : JSON.stringify(jsonData, null, 2)}</div>`;
             }
 
-            synthResult.innerHTML = html;
+            synthResult.innerHTML = html || '<p style="color:var(--text-muted);">No report generated.</p>';
             synthResult.style.display = 'block';
 
-            currentResearchData = jsonData;
-            document.getElementById('generate-script-btn').style.display = 'flex';
+            currentResearchData = jsonData; document.getElementById('generate-script-btn').style.display = 'flex';
         }
 
         async function generateScriptFromData() {
-            const query = document.getElementById('deep-input-field').value.trim() || "Research Topic";
-            const btn = document.getElementById('generate-script-btn');
-            
-            const originalBtnHtml = `<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;margin-right:8px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Write Script by AI`;
-            
-            btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;margin-right:8px;"></div> Drafting Thrilling Script...`;
-            btn.disabled = true;
-
+            const query = document.getElementById('deep-input-field').value.trim() || "Research Topic"; const btn = document.getElementById('generate-script-btn');
+            const originalBtnHtml = btn.innerHTML; btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;margin-right:8px;"></div> Drafting...`; btn.disabled = true;
             try {
-                addTerminalLog("AI Script Writer is drafting the narrative...", "var(--accent)", true);
-                
-                // ⚡ Using fetchWithAuth
-                const response = await fetchWithAuth('/api/generate-script', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query, research_data: currentResearchData })
-                });
-                
-                if (!response.ok) throw new Error(`Server Error (${response.status})`);
-                const data = await response.json();
-                if (data.error) throw new Error(data.error);
-                
-                document.getElementById('script-editor-section').style.display = 'block';
-                document.getElementById('final-script-box').value = data.script;
-                btn.style.display = 'none'; 
-                addTerminalLog("✅ AI Script Writer finished drafting the narrative.", "var(--success)");
-            } catch (err) {
-                console.error("Script Error:", err);
-                alert("Error generating script: " + err.message);
-                addTerminalLog(`❌ Script Error: ${err.message}`, "var(--danger)");
-                btn.innerHTML = originalBtnHtml;
-                btn.disabled = false;
-            }
+                addTerminalLog("AI Script Writer is drafting...", "var(--accent)", true);
+                const response = await fetchWithAuth('/api/generate-script', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query, research_data: currentResearchData }) });
+                const data = await response.json(); if (data.error) throw new Error(data.error);
+                document.getElementById('script-editor-section').style.display = 'block'; document.getElementById('final-script-box').value = data.script; btn.style.display = 'none'; 
+                addTerminalLog("✅ Script finalized.", "var(--success)");
+            } catch (err) { addTerminalLog(`❌ Script Error: ${err.message}`, "var(--danger)"); btn.innerHTML = originalBtnHtml; btn.disabled = false; }
         }
 
         async function dispatchToVideoCreator() {
-            const finalScript = document.getElementById('final-script-box').value.trim();
-            const query = document.getElementById('deep-input-field').value.trim();
-            const orientation = document.getElementById('video-orientation').value;
-            
+            const finalScript = document.getElementById('final-script-box').value.trim(); const query = document.getElementById('deep-input-field').value.trim(); const orientation = document.getElementById('video-orientation').value;
             if (!finalScript) return alert("Script is empty!");
-
             try {
-                addTerminalLog(`Dispatching script to Vidspark API (${orientation} mode)...`, "var(--accent)", true);
-                // ⚡ Using fetchWithAuth
-                const response = await fetchWithAuth('/api/dispatch-to-creator', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ script_text: finalScript, topic: query, orientation: orientation })
-                });
+                addTerminalLog(`Dispatching to Vidspark API...`, "var(--accent)", true);
+                const response = await fetchWithAuth('/api/dispatch-to-creator', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ script_text: finalScript, topic: query, orientation: orientation }) });
                 const data = await response.json();
-                
-                if (response.ok && data.status === "success") {
-                    addTerminalLog(`✅ Mission Accomplished! Task ID: ${data.task_id}`, "var(--success)");
-                    addTerminalLog(`Vidspark API Message: ${data.message}`, "var(--text-primary)");
-                    alert("Script successfully sent to your Vidspark App!");
-                } else {
-                    addTerminalLog(`❌ API Error: ${data.error}`, "var(--danger)");
-                    alert("Failed to send script: " + data.error);
-                }
-            } catch (err) {
-                addTerminalLog("Failed to dispatch script. Network issue.", "var(--danger)");
-            }
+                if (response.ok && data.status === "success") { addTerminalLog(`✅ Sent! Task ID: ${data.task_id}`, "var(--success)"); alert("Sent to Vidspark!"); } 
+                else { addTerminalLog(`❌ API Error: ${data.error}`, "var(--danger)"); alert("Failed: " + data.error); }
+            } catch (err) { addTerminalLog("Failed. Network issue.", "var(--danger)"); }
         }
 
+        // --- Article Viewer ---
         async function openArticleView(url) {
-            const overlay = document.getElementById('article-overlay');
-            const contentDiv = document.getElementById('article-pro-content');
-            document.getElementById('article-source-url').innerText = `${url}`;
-            overlay.style.display = 'flex';
-            history.pushState({ modal: 'article' }, "", `#article`);
-
-            contentDiv.innerHTML = `<div style="text-align:center; padding: 60px; color:var(--text-secondary)"><div class="spinner" style="margin: 0 auto 15px auto;"></div>Bypassing firewalls & extracting content...</div>`;
-
+            const overlay = document.getElementById('article-overlay'); const contentDiv = document.getElementById('article-pro-content');
+            document.getElementById('article-source-url').innerText = `${url}`; overlay.style.display = 'flex'; history.pushState({ modal: 'article' }, "", `#article`);
+            contentDiv.innerHTML = `<div style="text-align:center; padding: 60px; color:var(--text-secondary)"><div class="spinner" style="margin: 0 auto 15px auto;"></div>Bypassing firewalls & extracting...</div>`;
             try {
                 let data;
-                if (extractionCache[url]) {
-                    data = extractionCache[url];
-                } else {
-                    // ⚡ Using fetchWithAuth
-                    const response = await fetchWithAuth('/api/extract', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url })
-                    });
-                    data = await response.json();
-                    if(!data.error) extractionCache[url] = data;
-                }
-
-                if(data.error) {
-                    contentDiv.innerHTML = `<h3 style="color:var(--danger)">Extraction Failed</h3><p>${data.error}</p>`;
-                    return;
-                }
-
+                if (extractionCache[url]) data = extractionCache[url];
+                else { const response = await fetchWithAuth('/api/extract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url }) }); data = await response.json(); if(!data.error) extractionCache[url] = data; }
+                if(data.error) return contentDiv.innerHTML = `<h3 style="color:var(--danger)">Extraction Failed</h3><p>${data.error}</p>`;
                 if(data.images || data.videos) processExtractedMedia(data.images, data.videos);
-
                 let html = ``;
-                if (data.videos && data.videos.length > 0) {
-                    const v = data.videos[0];
-                    if (v.includes('.mp4') || v.includes('.webm')) html += `<video class="embedded-media" controls><source src="${v}"></video>`;
-                    else html += `<iframe class="embedded-media" style="aspect-ratio: 16/9;" src="${v}" frameborder="0" allowfullscreen></iframe>`;
-                }
-
-                let paragraphs = data.text.split('<br><br>');
-                let imgIndex = 0;
+                if (data.videos && data.videos.length > 0) { const v = data.videos[0]; if (v.includes('.mp4') || v.includes('.webm')) html += `<video class="embedded-media" controls><source src="${v}"></video>`; else html += `<iframe class="embedded-media" style="aspect-ratio: 16/9;" src="${v}" frameborder="0" allowfullscreen></iframe>`; }
+                let paragraphs = data.text.split('<br><br>'); let imgIndex = 0;
                 paragraphs.forEach((p, i) => {
                     if(p.trim().length > 0) html += `<p>${p}</p>`;
-                    if (i > 0 && i % 2 === 0 && data.images && imgIndex < data.images.length) {
-                        html += `<img src="${data.images[imgIndex]}" class="embedded-media" loading="lazy">`;
-                        imgIndex++;
-                    }
+                    if (i > 0 && i % 2 === 0 && data.images && imgIndex < data.images.length) { html += `<img src="${data.images[imgIndex]}" class="embedded-media" loading="lazy">`; imgIndex++; }
                 });
                 contentDiv.innerHTML = html;
-            } catch(err) {
-                contentDiv.innerHTML = `<h3 style="color:var(--danger)">Network Error</h3><p>${err.message}</p>`;
-            }
+            } catch(err) { contentDiv.innerHTML = `<h3 style="color:var(--danger)">Network Error</h3><p>${err.message}</p>`; }
         }
+        window.addEventListener('popstate', (e) => { if (!e.state || e.state.modal !== 'article') document.getElementById('article-overlay').style.display = 'none'; });
+        function closeArticleView() { document.getElementById('article-overlay').style.display = 'none'; if(history.state && history.state.modal === 'article') history.back(); }
 
-        window.addEventListener('popstate', (e) => {
-            if (!e.state || e.state.modal !== 'article') document.getElementById('article-overlay').style.display = 'none';
-        });
-
-        function closeArticleView() {
-            document.getElementById('article-overlay').style.display = 'none';
-            if(history.state && history.state.modal === 'article') history.back();
-        }
-
-        // --- Media Filter & Sequential Loading Logic ---
+        // --- Media System (⚡ FIXED to run truly in background) ---
         function isJunkMedia(url) {
-            if(!url) return true;
-            const lowerUrl = url.toLowerCase();
-            if (lowerUrl.includes('/user/') && (lowerUrl.includes('48x48') || lowerUrl.includes('96x96') || lowerUrl.includes('32x32'))) return true;
-            if (lowerUrl.match(/_(32|48|64|96)x\d+\.(jpg|png|webp|gif)$/i)) return true;
-            if (lowerUrl.includes('avatar') || lowerUrl.includes('profile')) return true;
-            if (lowerUrl.includes('logo') && (lowerUrl.includes('small') || lowerUrl.includes('icon'))) return true;
-            return false;
+            if(!url) return true; const l = url.toLowerCase();
+            if (l.includes('/user/') && (l.includes('48x48') || l.includes('96x96'))) return true;
+            if (l.match(/_(32|48|64|96)x\d+\.(jpg|png|webp|gif)$/i)) return true;
+            if (l.includes('avatar') || l.includes('profile') || (l.includes('logo') && l.includes('icon'))) return true; return false;
         }
 
         async function startSequentialMediaLoading() {
             if (isExtractingMedia || mediaProcessedIndex >= pendingMediaUrls.length) return;
             isExtractingMedia = true;
-            const statusDiv = document.getElementById('media-status');
-            const statusText = document.getElementById('media-status-text');
+            const statusDiv = document.getElementById('media-status'); const statusText = document.getElementById('media-status-text');
             statusDiv.style.display = 'flex';
 
             while (mediaProcessedIndex < pendingMediaUrls.length) {
-                if(!document.getElementById('page-media').classList.contains('active')){
-                    isExtractingMedia = false;
-                    statusDiv.style.display = 'none';
-                    return;
-                }
-
+                // ⚡ REMOVED the strict page check so it runs silently in the background!
                 let url = pendingMediaUrls[mediaProcessedIndex];
                 statusText.innerText = `Extracting visual assets from: ${url.substring(0,35)}...`;
 
                 try {
                     let data;
-                    if(extractionCache[url]) {
-                        data = extractionCache[url];
-                    } else {
-                        // ⚡ Using fetchWithAuth
-                        const res = await fetchWithAuth('/api/extract', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({url: url})
-                        });
-                        data = await res.json();
-                        if(!data.error) extractionCache[url] = data;
+                    if(extractionCache[url]) data = extractionCache[url];
+                    else {
+                        const res = await fetchWithAuth('/api/extract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({url: url}) });
+                        data = await res.json(); if(!data.error) extractionCache[url] = data;
                     }
-                    if(data && !data.error) {
-                        processExtractedMedia(data.images, data.videos);
-                    }
-                } catch(e) {
-                    console.error("Media load error for", url);
-                }
+                    if(data && !data.error) processExtractedMedia(data.images, data.videos);
+                } catch(e) { console.error("Media error", url); }
                 mediaProcessedIndex++;
-                await new Promise(r => setTimeout(r, 1500));
+                await new Promise(r => setTimeout(r, 1500)); // Be polite to the backend
             }
-            isExtractingMedia = false;
-            statusDiv.style.display = 'none';
+            isExtractingMedia = false; statusDiv.style.display = 'none';
         }
 
         function processExtractedMedia(images, videos) {
             let addedNew = false;
-            if(images) {
-                images.forEach(url => {
-                    if(!globalMedia.some(m => m.url === url)) {
-                        globalMedia.push({ type: 'image', url: url, isJunk: isJunkMedia(url) });
-                        addedNew = true;
-                    }
-                });
-            }
-            if(videos) {
-                videos.forEach(url => {
-                    if(!globalMedia.some(m => m.url === url)) {
-                        globalMedia.push({ type: 'video', url: url, isJunk: false });
-                        addedNew = true;
-                    }
-                });
-            }
-            if(addedNew && document.getElementById('page-media').classList.contains('active')) {
-                renderMediaGrid();
-            }
+            if(images) images.forEach(url => { if(!globalMedia.some(m => m.url === url)) { globalMedia.push({ type: 'image', url: url, isJunk: isJunkMedia(url) }); addedNew = true; } });
+            if(videos) videos.forEach(url => { if(!globalMedia.some(m => m.url === url)) { globalMedia.push({ type: 'video', url: url, isJunk: false }); addedNew = true; } });
+            if(addedNew && document.getElementById('page-media').classList.contains('active')) renderMediaGrid();
         }
 
-        function toggleJunkMedia() { renderMediaGrid(); }
-        function filterMediaType(type) { currentMediaTypeFilter = type; renderMediaGrid(); }
-
+        function toggleJunkMedia() { renderMediaGrid(); } function filterMediaType(type) { currentMediaTypeFilter = type; renderMediaGrid(); }
         function renderMediaGrid() {
-            const grid = document.getElementById('media-grid');
-            const hideJunk = document.getElementById('filter-junk-btn').checked;
-            grid.innerHTML = '';
-
-            let filteredMedia = globalMedia.filter(m => {
-                if(currentMediaTypeFilter !== 'all' && m.type !== currentMediaTypeFilter) return false;
-                if(hideJunk && m.isJunk) return false;
-                return true;
-            });
-
-            if (filteredMedia.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.95rem; grid-column: 1/-1; text-align: center; padding: 20px;">No matching media found.</p>';
-                return;
-            }
-
-            filteredMedia.forEach(m => {
-                const card = document.createElement('div');
-                card.className = `media-card ${m.isJunk ? 'junk-media' : ''}`;
-                let mediaHtml = '';
-                if (m.type === 'image') {
-                    mediaHtml = `<a href="${m.url}" target="_blank"><img src="${m.url}" loading="lazy"></a>`;
-                } else {
-                    if (m.url.includes('.mp4') || m.url.includes('.webm')) {
-                        mediaHtml = `<video controls><source src="${m.url}"></video>`;
-                    } else {
-                        mediaHtml = `<iframe src="${m.url}" style="width:100%; height:130px; border:none;"></iframe>`;
-                    }
-                }
-                card.innerHTML = `<div class="junk-badge">JUNK</div>${mediaHtml}`;
-                grid.appendChild(card);
+            const grid = document.getElementById('media-grid'); const hideJunk = document.getElementById('filter-junk-btn').checked; grid.innerHTML = '';
+            let filtered = globalMedia.filter(m => { if(currentMediaTypeFilter !== 'all' && m.type !== currentMediaTypeFilter) return false; if(hideJunk && m.isJunk) return false; return true; });
+            if (filtered.length === 0) return grid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.95rem; grid-column: 1/-1; text-align: center; padding: 20px;">No matching media found.</p>';
+            filtered.forEach(m => {
+                const card = document.createElement('div'); card.className = `media-card ${m.isJunk ? 'junk-media' : ''}`;
+                let mHtml = m.type === 'image' ? `<a href="${m.url}" target="_blank"><img src="${m.url}" loading="lazy"></a>` : (m.url.includes('.mp4') || m.url.includes('.webm') ? `<video controls><source src="${m.url}"></video>` : `<iframe src="${m.url}" style="width:100%; height:130px; border:none;"></iframe>`);
+                card.innerHTML = `<div class="junk-badge">JUNK</div>${mHtml}`; grid.appendChild(card);
             });
         }
-
         function executeMediaScrape() {
-            const urlInput = document.getElementById('media-url-input');
-            const url = urlInput.value.trim();
-            if (!url) return;
-            if (!/^(https?:\/\/)/i.test(url)) {
-                alert("Please enter a valid HTTP/HTTPS URL.");
-                return;
-            }
-            if(!pendingMediaUrls.includes(url)) pendingMediaUrls.push(url);
-            urlInput.value = ''; 
-            startSequentialMediaLoading();
+            const url = document.getElementById('media-url-input').value.trim(); if (!url || !/^(https?:\/\/)/i.test(url)) return alert("Valid HTTP/HTTPS URL required.");
+            if(!pendingMediaUrls.includes(url)) pendingMediaUrls.push(url); document.getElementById('media-url-input').value = ''; startSequentialMediaLoading();
         }
 
-        // Start Global Poller at boot
         initGlobalPoller();
     </script>
 </body>
