@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Documentation - Spark Studio</title>
+    <title>Spark Studio - API Documentation</title>
     
-    <!-- PWA & Theme -->
     <meta name="theme-color" content="#030712">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --bg-deep: #030712;
-            --bg-surface: rgba(11, 17, 32, 0.85);
+            --bg-surface: rgba(17, 24, 39, 0.95);
             --bg-card: #111827;
             --accent: #0EA5E9;
             --accent-dim: rgba(14, 165, 233, 0.15);
             --text-primary: #F3F4F6;
             --text-secondary: #9CA3AF;
+            --text-muted: #6B7280;
             --border-color: #1F2937;
             --success: #10B981;
+            --warning: #F59E0B;
             --method-get: #3B82F6;
             --method-post: #10B981;
+            --code-bg: #0d1117;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -34,8 +36,8 @@
 
         /* Header */
         header {
-            background-color: var(--bg-surface); backdrop-filter: blur(10px);
-            padding: 20px 40px; border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-surface); backdrop-filter: blur(12px);
+            padding: 16px 40px; border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center;
         }
         .brand { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); }
@@ -48,49 +50,59 @@
         }
         .btn-home:hover { background: var(--accent); color: white; transform: translateY(-2px); }
 
-        /* Main Container */
-        main { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
-        
-        h1 { margin-bottom: 10px; font-size: 2.5rem; }
+        /* Layout */
+        main { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; }
         p.subtitle { color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem; }
 
-        /* Auth Section */
+        /* Auth Card */
         .auth-card {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(16, 185, 129, 0.05));
-            border: 1px solid var(--accent); border-radius: 12px; padding: 25px; margin-bottom: 40px;
+            background: linear-gradient(to right, #111827, #0B1120); border: 1px solid var(--accent);
+            border-radius: 12px; padding: 30px; margin-bottom: 50px; box-shadow: 0 10px 30px rgba(14, 165, 233, 0.1);
         }
-        .auth-card h3 { color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        code.inline { background: rgba(0,0,0,0.5); padding: 3px 6px; border-radius: 4px; color: #FFD700; font-family: monospace; font-size: 0.9rem; }
+        .auth-card h3 { color: var(--accent); margin-bottom: 15px; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .auth-card p { color: var(--text-secondary); margin-bottom: 15px; font-size: 0.95rem; }
+        code.inline { background: rgba(0,0,0,0.4); padding: 3px 6px; border-radius: 4px; color: #FFD700; font-family: monospace; border: 1px solid #333; }
 
-        /* API Endpoint Cards */
-        .endpoint-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 30px; overflow: hidden; }
-        .endpoint-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.2); }
-        
-        .method { padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 800; font-family: monospace; text-transform: uppercase; }
+        /* API Cards */
+        .endpoint-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 40px; overflow: hidden; }
+        .endpoint-header { padding: 20px 25px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.2); }
+        .method { padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 800; font-family: monospace; letter-spacing: 1px; }
         .method.post { background: rgba(16, 185, 129, 0.15); color: var(--success); }
         .method.get { background: rgba(59, 130, 246, 0.15); color: var(--method-get); }
+        .path { font-family: monospace; font-size: 1.2rem; font-weight: 600; color: var(--text-primary); word-break: break-all; }
         
-        .path { font-family: monospace; font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+        .endpoint-body { padding: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media (max-width: 900px) { .endpoint-body { grid-template-columns: 1fr; } }
         
-        .endpoint-body { padding: 25px; }
-        .endpoint-body p { color: var(--text-secondary); margin-bottom: 20px; }
+        .desc-col h4 { color: var(--text-primary); margin-bottom: 15px; font-size: 1.1rem; }
+        .desc-col p { color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem; }
         
-        /* Code Blocks */
-        .code-window { background: #000; border-radius: 8px; margin-bottom: 20px; border: 1px solid #222; }
-        .code-header { background: #111; padding: 8px 15px; border-bottom: 1px solid #222; font-size: 0.8rem; color: #888; font-family: monospace; border-radius: 8px 8px 0 0; }
-        .code-window pre { padding: 15px; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.9rem; color: #A6ACCD; }
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; }
+        td code { color: var(--accent); font-family: monospace; }
         
-        /* Syntax Colors */
-        .key { color: #82AAFF; }
-        .string { color: #C3E88D; }
-        .number { color: #F78C6C; }
-        .boolean { color: #FFCB6B; }
+        /* Code Tabs & Blocks */
+        .code-col { background: var(--code-bg); border-radius: 10px; border: 1px solid #222; overflow: hidden; display: flex; flex-direction: column; }
+        .tabs { display: flex; background: #010409; border-bottom: 1px solid #222; }
+        .tab-btn { background: transparent; border: none; color: #8B949E; padding: 10px 15px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; outline: none; }
+        .tab-btn:hover { color: #C9D1D9; background: rgba(255,255,255,0.05); }
+        .tab-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); background: rgba(14, 165, 233, 0.05); }
+        
+        .code-content { padding: 20px; overflow-x: auto; flex: 1; font-family: 'Consolas', monospace; font-size: 0.85rem; line-height: 1.5; color: #E6EDF3; display: none; }
+        .code-content.active { display: block; }
+        
+        .resp-header { padding: 10px 15px; background: #010409; color: #8B949E; font-size: 0.8rem; font-weight: 600; border-top: 1px solid #222; border-bottom: 1px solid #222; }
+        .resp-body { padding: 20px; overflow-x: auto; font-family: monospace; font-size: 0.85rem; color: #A5D6FF; }
 
-        @media (max-width: 768px) {
-            header { padding: 15px 20px; }
-            h1 { font-size: 2rem; }
-            .endpoint-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-        }
+        /* Syntax Colors */
+        .c-kw { color: #FF7B72; } /* Keyword */
+        .c-str { color: #A5D6FF; } /* String */
+        .c-var { color: #79C0FF; } /* Variable */
+        .c-num { color: #79C0FF; } /* Number */
+        .c-cmt { color: #8B949E; } /* Comment */
     </style>
 </head>
 <body>
@@ -105,147 +117,380 @@
 
     <main>
         <h1>API Reference</h1>
-        <p class="subtitle">Complete documentation for Spark Studio's Elite Proxy Backend.</p>
+        <p class="subtitle">Complete developer guide for the Spark Studio Elite Proxy API. Integrations available for Python, Node.js, and cURL.</p>
 
+        <!-- AUTH SECTION -->
         <div class="auth-card">
-            <h3>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Authentication
-            </h3>
-            <p style="color:var(--text-secondary); margin-bottom: 15px;">All API endpoints are protected via an <strong>Elite Proxy Layer</strong>. You must pass your Custom Frontend Key (`SS_API_KEY`) as a Bearer Token in the headers.</p>
-            <div class="code-window">
-                <div class="code-header">HTTP Header</div>
-                <pre>Authorization: Bearer <span class="string">&lt;YOUR_SS_API_KEY&gt;</span></pre>
+            <h3><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Authentication (Bearer Token)</h3>
+            <p>All endpoints are strictly protected by a proxy layer. You must pass your custom <code>SS_API_KEY</code> in the <code>Authorization</code> header of every request.</p>
+            <div style="background:#000; padding:12px 15px; border-radius:6px; border:1px solid #333; font-family:monospace; color:#A5D6FF; font-size:0.9rem;">
+                Authorization: Bearer &lt;YOUR_SS_API_KEY&gt;
             </div>
+            <p style="margin-top:10px; font-size:0.85rem; color:var(--warning);">* The API base URL is auto-detected below based on your current host.</p>
         </div>
 
-        <!-- ENDPOINT 1: FAST SEARCH -->
+        <!-- 1. FAST SEARCH -->
         <div class="endpoint-card">
             <div class="endpoint-header">
                 <span class="method post">POST</span>
                 <span class="path">/api/fast-search</span>
             </div>
             <div class="endpoint-body">
-                <p>Performs a quick search query across the database. Returns matched URLs and snippets.</p>
-                <div class="code-window">
-                    <div class="code-header">Request Payload (JSON)</div>
-                    <pre>{
-  <span class="key">"query"</span>: <span class="string">"What is quantum mechanics?"</span>,
-  <span class="key">"threshold"</span>: <span class="number">0.7</span>
-}</pre>
+                <div class="desc-col">
+                    <h4>Description</h4>
+                    <p>Performs a quick search across the database and returns matched URLs along with context snippets.</p>
+                    <h4>Parameters (JSON Body)</h4>
+                    <table>
+                        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                        <tr><td><code>query</code></td><td>String</td><td>The search keyword or question.</td></tr>
+                        <tr><td><code>threshold</code></td><td>Float</td><td>Relevance threshold (e.g., 0.7). Optional.</td></tr>
+                    </table>
+                </div>
+                <div class="code-col">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab(this, 'fs-curl')">cURL</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'fs-py')">Python</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'fs-js')">JavaScript</button>
+                    </div>
+                    <div id="fs-curl" class="code-content active">
+<span class="c-kw">curl</span> -X POST <span class="c-str">"<span class="dyn-url"></span>/api/fast-search"</span> \
+  -H <span class="c-str">"Content-Type: application/json"</span> \
+  -H <span class="c-str">"Authorization: Bearer YOUR_SS_API_KEY"</span> \
+  -d <span class="c-str">'{
+    "query": "What is quantum mechanics?",
+    "threshold": 0.7
+  }'</span>
+                    </div>
+                    <div id="fs-py" class="code-content">
+<span class="c-kw">import</span> requests
+
+url = <span class="c-str">"<span class="dyn-url"></span>/api/fast-search"</span>
+headers = {
+    <span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer YOUR_SS_API_KEY"</span>,
+    <span class="c-str">"Content-Type"</span>: <span class="c-str">"application/json"</span>
+}
+payload = {
+    <span class="c-str">"query"</span>: <span class="c-str">"What is quantum mechanics?"</span>,
+    <span class="c-str">"threshold"</span>: <span class="c-num">0.7</span>
+}
+
+response = requests.post(url, json=payload, headers=headers)
+<span class="c-kw">print</span>(response.json())
+                    </div>
+                    <div id="fs-js" class="code-content">
+<span class="c-kw">const</span> <span class="c-var">url</span> = <span class="c-str">"<span class="dyn-url"></span>/api/fast-search"</span>;
+
+<span class="c-kw">async function</span> search() {
+  <span class="c-kw">const</span> <span class="c-var">response</span> = <span class="c-kw">await</span> fetch(url, {
+    method: <span class="c-str">"POST"</span>,
+    headers: {
+      <span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer YOUR_SS_API_KEY"</span>,
+      <span class="c-str">"Content-Type"</span>: <span class="c-str">"application/json"</span>
+    },
+    body: JSON.stringify({ query: <span class="c-str">"What is quantum mechanics?"</span> })
+  });
+  <span class="c-kw">const</span> <span class="c-var">data</span> = <span class="c-kw">await</span> response.json();
+  console.log(data);
+}
+                    </div>
+                    <div class="resp-header">JSON Response</div>
+                    <div class="resp-body">{
+  "results": [
+    {
+      "url": "https://example.com/quantum",
+      "title": "Quantum Mechanics Explained",
+      "snippet": "Quantum mechanics is a fundamental theory..."
+    }
+  ]
+}</div>
                 </div>
             </div>
         </div>
 
-        <!-- ENDPOINT 2: DEEP RESEARCH START -->
+        <!-- 2. DEEP SEARCH START -->
         <div class="endpoint-card">
             <div class="endpoint-header">
                 <span class="method post">POST</span>
                 <span class="path">/api/research/start</span>
             </div>
             <div class="endpoint-body">
-                <p>Initiates a background multi-source scanning process. Returns a task ID to poll for status.</p>
-                <div class="code-window">
-                    <div class="code-header">Request Payload (JSON)</div>
-                    <pre>{
-  <span class="key">"query"</span>: <span class="string">"Eridanus Supervoid"</span>
-}</pre>
+                <div class="desc-col">
+                    <h4>Description</h4>
+                    <p>Starts an asynchronous deep scanning job on the backend workers. You will receive a <code>task_id</code> immediately which you must use to poll for the result.</p>
+                    <h4>Parameters (JSON Body)</h4>
+                    <table>
+                        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                        <tr><td><code>query</code></td><td>String</td><td>The deep research topic.</td></tr>
+                    </table>
                 </div>
-                <div class="code-window">
-                    <div class="code-header">Response</div>
-                    <pre>{
-  <span class="key">"status"</span>: <span class="string">"processing"</span>,
-  <span class="key">"task_id"</span>: <span class="string">"task_abc123"</span>
-}</pre>
+                <div class="code-col">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab(this, 'ds-curl')">cURL</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'ds-py')">Python</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'ds-js')">JavaScript</button>
+                    </div>
+                    <div id="ds-curl" class="code-content active">
+<span class="c-kw">curl</span> -X POST <span class="c-str">"<span class="dyn-url"></span>/api/research/start"</span> \
+  -H <span class="c-str">"Content-Type: application/json"</span> \
+  -H <span class="c-str">"Authorization: Bearer YOUR_SS_API_KEY"</span> \
+  -d <span class="c-str">'{"query": "The Eridanus Supervoid anomaly"}'</span>
+                    </div>
+                    <div id="ds-py" class="code-content">
+<span class="c-kw">import</span> requests
+
+url = <span class="c-str">"<span class="dyn-url"></span>/api/research/start"</span>
+headers = {<span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer YOUR_API_KEY"</span>}
+payload = {<span class="c-str">"query"</span>: <span class="c-str">"The Eridanus Supervoid anomaly"</span>}
+
+res = requests.post(url, json=payload, headers=headers)
+<span class="c-kw">print</span>(res.json()) <span class="c-cmt"># Returns task_id</span>
+                    </div>
+                    <div id="ds-js" class="code-content">
+fetch(<span class="c-str">"<span class="dyn-url"></span>/api/research/start"</span>, {
+  method: <span class="c-str">"POST"</span>,
+  headers: {
+    <span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer YOUR_KEY"</span>,
+    <span class="c-str">"Content-Type"</span>: <span class="c-str">"application/json"</span>
+  },
+  body: JSON.stringify({ query: <span class="c-str">"The Eridanus Supervoid"</span> })
+}).then(r => r.json()).then(console.log);
+                    </div>
+                    <div class="resp-header">JSON Response</div>
+                    <div class="resp-body">{
+  "status": "processing",
+  "task_id": "8f3a9b1c-..."
+}</div>
                 </div>
             </div>
         </div>
 
-        <!-- ENDPOINT 3: RESEARCH STATUS -->
+        <!-- 3. RESEARCH STATUS -->
         <div class="endpoint-card">
             <div class="endpoint-header">
                 <span class="method get">GET</span>
                 <span class="path">/api/research/status/{task_id}</span>
             </div>
             <div class="endpoint-body">
-                <p>Poll this endpoint to get live terminal logs and the final synthesis report.</p>
-                <div class="code-window">
-                    <div class="code-header">Response (When Complete)</div>
-                    <pre>{
-  <span class="key">"status"</span>: <span class="string">"complete"</span>,
-  <span class="key">"logs"</span>: [
-    { <span class="key">"msg"</span>: <span class="string">"Data extracted..."</span>, <span class="key">"color"</span>: <span class="string">"green"</span> }
-  ],
-  <span class="key">"result"</span>: {
-    <span class="key">"urls"</span>: [...],
-    <span class="key">"data"</span>: { ... Synthesis Report JSON ... }
+                <div class="desc-col">
+                    <h4>Description</h4>
+                    <p>Poll this endpoint every 2-3 seconds using the <code>task_id</code> to get live backend terminal logs and eventually the final AI Synthesis JSON.</p>
+                </div>
+                <div class="code-col">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab(this, 'st-curl')">cURL</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'st-py')">Python</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'st-js')">JavaScript</button>
+                    </div>
+                    <div id="st-curl" class="code-content active">
+<span class="c-kw">curl</span> -X GET <span class="c-str">"<span class="dyn-url"></span>/api/research/status/TASK_ID_HERE"</span> \
+  -H <span class="c-str">"Authorization: Bearer YOUR_SS_API_KEY"</span>
+                    </div>
+                    <div id="st-py" class="code-content">
+<span class="c-kw">import</span> requests, time
+
+task_id = <span class="c-str">"YOUR_TASK_ID"</span>
+url = <span class="c-str">f"<span class="dyn-url"></span>/api/research/status/{task_id}"</span>
+headers = {<span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer YOUR_KEY"</span>}
+
+<span class="c-kw">while True</span>:
+    res = requests.get(url, headers=headers).json()
+    <span class="c-kw">if</span> res[<span class="c-str">"status"</span>] == <span class="c-str">"complete"</span>:
+        <span class="c-kw">print</span>(<span class="c-str">"Done!"</span>, res[<span class="c-str">"result"</span>])
+        <span class="c-kw">break</span>
+    time.sleep(3)
+                    </div>
+                    <div id="st-js" class="code-content">
+<span class="c-kw">const</span> url = <span class="c-str">`<span class="dyn-url"></span>/api/research/status/${taskId}`</span>;
+
+<span class="c-kw">const</span> poll = setInterval(<span class="c-kw">async</span> () => {
+  <span class="c-kw">const</span> res = <span class="c-kw">await</span> fetch(url, { headers: { <span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer KEY"</span> }});
+  <span class="c-kw">const</span> data = <span class="c-kw">await</span> res.json();
+  
+  <span class="c-kw">if</span> (data.status === <span class="c-str">"complete"</span>) {
+    clearInterval(poll);
+    console.log(<span class="c-str">"Final Data:"</span>, data.result);
   }
-}</pre>
+}, 3000);
+                    </div>
+                    <div class="resp-header">JSON Response (When Complete)</div>
+                    <div class="resp-body">{
+  "status": "complete",
+  "logs": [ { "msg": "Extracting...", "color": "green" } ],
+  "result": {
+    "urls": [...],
+    "data": { "conflict_engine": {...}, "lore_engine": {...} }
+  }
+}</div>
                 </div>
             </div>
         </div>
 
-        <!-- ENDPOINT 4: EXTRACT -->
+        <!-- 4. EXTRACT -->
         <div class="endpoint-card">
             <div class="endpoint-header">
                 <span class="method post">POST</span>
                 <span class="path">/api/extract</span>
             </div>
             <div class="endpoint-body">
-                <p>Bypasses firewalls to extract clean text, images, and videos from a specific URL.</p>
-                <div class="code-window">
-                    <div class="code-header">Request Payload (JSON)</div>
-                    <pre>{
-  <span class="key">"url"</span>: <span class="string">"https://example.com/article"</span>
-}</pre>
+                <div class="desc-col">
+                    <h4>Description</h4>
+                    <p>Bypasses web firewalls to extract clean article text, image URLs, and video iframes from any public URL.</p>
+                </div>
+                <div class="code-col">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab(this, 'ex-curl')">cURL</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'ex-py')">Python</button>
+                    </div>
+                    <div id="ex-curl" class="code-content active">
+<span class="c-kw">curl</span> -X POST <span class="c-str">"<span class="dyn-url"></span>/api/extract"</span> \
+  -H <span class="c-str">"Authorization: Bearer YOUR_SS_API_KEY"</span> \
+  -H <span class="c-str">"Content-Type: application/json"</span> \
+  -d <span class="c-str">'{"url": "https://en.wikipedia.org/wiki/Earth"}'</span>
+                    </div>
+                    <div id="ex-py" class="code-content">
+<span class="c-kw">import</span> requests
+
+url = <span class="c-str">"<span class="dyn-url"></span>/api/extract"</span>
+payload = {<span class="c-str">"url"</span>: <span class="c-str">"https://en.wikipedia.org/wiki/Earth"</span>}
+headers = {<span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer KEY"</span>}
+
+<span class="c-kw">print</span>(requests.post(url, json=payload, headers=headers).json())
+                    </div>
+                    <div class="resp-header">JSON Response</div>
+                    <div class="resp-body">{
+  "text": "Earth is the third planet...",
+  "images": ["https://...image.jpg"],
+  "videos": []
+}</div>
                 </div>
             </div>
         </div>
 
-        <!-- ENDPOINT 5: GENERATE SCRIPT -->
+        <!-- 5. GENERATE SCRIPT -->
         <div class="endpoint-card">
             <div class="endpoint-header">
                 <span class="method post">POST</span>
                 <span class="path">/api/generate-script</span>
             </div>
             <div class="endpoint-body">
-                <p>AI generates a highly engaging YouTube/Reels script based on the researched data.</p>
-                <div class="code-window">
-                    <div class="code-header">Request Payload (JSON)</div>
-                    <pre>{
-  <span class="key">"query"</span>: <span class="string">"Topic Name"</span>,
-  <span class="key">"research_data"</span>: { ... JSON from Deep Scan ... }
-}</pre>
+                <div class="desc-col">
+                    <h4>Description</h4>
+                    <p>Pass the JSON object obtained from Deep Search, and this AI will write a highly engaging YouTube or Short script complete with visual cues.</p>
                 </div>
-                <div class="code-window">
-                    <div class="code-header">Response</div>
-                    <pre>{
-  <span class="key">"script"</span>: <span class="string">"[Hook]\nDid you know..."</span>
-}</pre>
+                <div class="code-col">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab(this, 'gs-py')">Python</button>
+                    </div>
+                    <div id="gs-py" class="code-content active">
+<span class="c-kw">import</span> requests
+
+url = <span class="c-str">"<span class="dyn-url"></span>/api/generate-script"</span>
+payload = {
+    <span class="c-str">"query"</span>: <span class="c-str">"The Supervoid"</span>,
+    <span class="c-str">"research_data"</span>: { <span class="c-cmt">/* Full Deep Scan Result JSON */</span> }
+}
+headers = {<span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer KEY"</span>}
+
+res = requests.post(url, json=payload, headers=headers)
+<span class="c-kw">print</span>(res.json().get(<span class="c-str">"script"</span>))
+                    </div>
+                    <div class="resp-header">JSON Response</div>
+                    <div class="resp-body">{
+  "script": "[Visual: Dark space]\n\nDid you know there is a void..."
+}</div>
                 </div>
             </div>
         </div>
 
-        <!-- ENDPOINT 6: DISPATCH TO CREATOR -->
+        <!-- 6. DISPATCH TO CREATOR -->
         <div class="endpoint-card">
             <div class="endpoint-header">
                 <span class="method post">POST</span>
                 <span class="path">/api/dispatch-to-creator</span>
             </div>
             <div class="endpoint-body">
-                <p>Sends the finalized script to the Vidspark API for video generation.</p>
-                <div class="code-window">
-                    <div class="code-header">Request Payload (JSON)</div>
-                    <pre>{
-  <span class="key">"script_text"</span>: <span class="string">"The final edited script..."</span>,
-  <span class="key">"topic"</span>: <span class="string">"Video Title"</span>,
-  <span class="key">"orientation"</span>: <span class="string">"vertical"</span> <span class="string">// or "horizontal"</span>
-}</pre>
+                <div class="desc-col">
+                    <h4>Description</h4>
+                    <p>Sends the final edited script text to the Vidspark engine to render a full video.</p>
+                    <table>
+                        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                        <tr><td><code>script_text</code></td><td>String</td><td>The written script.</td></tr>
+                        <tr><td><code>topic</code></td><td>String</td><td>Video title/topic.</td></tr>
+                        <tr><td><code>orientation</code></td><td>String</td><td>"vertical" or "horizontal"</td></tr>
+                    </table>
+                </div>
+                <div class="code-col">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab(this, 'dc-py')">Python</button>
+                        <button class="tab-btn" onclick="switchTab(this, 'dc-js')">JS</button>
+                    </div>
+                    <div id="dc-py" class="code-content active">
+<span class="c-kw">import</span> requests
+
+url = <span class="c-str">"<span class="dyn-url"></span>/api/dispatch-to-creator"</span>
+payload = {
+    <span class="c-str">"script_text"</span>: <span class="c-str">"Hello guys..."</span>,
+    <span class="c-str">"topic"</span>: <span class="c-str">"My Video"</span>,
+    <span class="c-str">"orientation"</span>: <span class="c-str">"horizontal"</span>
+}
+headers = {<span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer KEY"</span>}
+
+requests.post(url, json=payload, headers=headers)
+                    </div>
+                    <div id="dc-js" class="code-content">
+fetch(<span class="c-str">"<span class="dyn-url"></span>/api/dispatch-to-creator"</span>, {
+  method: <span class="c-str">"POST"</span>,
+  headers: {
+    <span class="c-str">"Authorization"</span>: <span class="c-str">"Bearer KEY"</span>,
+    <span class="c-str">"Content-Type"</span>: <span class="c-str">"application/json"</span>
+  },
+  body: JSON.stringify({
+    script_text: <span class="c-str">"..."</span>,
+    topic: <span class="c-str">"..."</span>,
+    orientation: <span class="c-str">"vertical"</span>
+  })
+});
+                    </div>
+                    <div class="resp-header">JSON Response</div>
+                    <div class="resp-body">{
+  "status": "success",
+  "task_id": "vid_xyz",
+  "message": "Script queued for rendering."
+}</div>
                 </div>
             </div>
         </div>
 
     </main>
 
+    <script>
+        // ⚡ DYNAMIC URL INJECTION
+        // This ensures NO hardcoded URLs. It automatically detects where the app is running.
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentHost = window.location.origin;
+            const urlSpans = document.querySelectorAll('.dyn-url');
+            urlSpans.forEach(span => {
+                span.textContent = currentHost;
+            });
+        });
+
+        // ⚡ TAB SWITCHING LOGIC
+        function switchTab(clickedBtn, targetId) {
+            // Find parent container
+            const codeCol = clickedBtn.closest('.code-col');
+            
+            // Remove active classes from buttons
+            const allBtns = codeCol.querySelectorAll('.tab-btn');
+            allBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Hide all content boxes
+            const allContents = codeCol.querySelectorAll('.code-content');
+            allContents.forEach(content => content.classList.remove('active'));
+            
+            // Activate target
+            clickedBtn.classList.add('active');
+            document.getElementById(targetId).classList.add('active');
+        }
+    </script>
 </body>
 </html>
