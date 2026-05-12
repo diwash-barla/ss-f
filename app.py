@@ -78,6 +78,10 @@ async def get_manifest():
 async def get_sw():
     return FileResponse("service-worker.js")
 
+@app.get("/docs-ui")
+async def read_docs(request: Request):
+    return templates.TemplateResponse(request=request, name="docs.html")
+
 # ==========================================
 # ⚡ PROXY API ROUTES
 # ==========================================
