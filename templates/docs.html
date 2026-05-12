@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - Spark Studio</title>
+    
+    <!-- PWA & Theme -->
+    <meta name="theme-color" content="#030712">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --bg-surface: rgba(11, 17, 32, 0.85);
+            --bg-card: #111827;
+            --accent: #0EA5E9;
+            --accent-dim: rgba(14, 165, 233, 0.15);
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --border-color: #1F2937;
+            --success: #10B981;
+            --method-get: #3B82F6;
+            --method-post: #10B981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Header */
+        header {
+            background-color: var(--bg-surface); backdrop-filter: blur(10px);
+            padding: 20px 40px; border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); }
+        .brand span { color: var(--accent); }
+        
+        .btn-home {
+            background: rgba(14, 165, 233, 0.1); border: 1px solid var(--accent); color: var(--accent);
+            padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: 0.2s ease; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-home:hover { background: var(--accent); color: white; transform: translateY(-2px); }
+
+        /* Main Container */
+        main { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        
+        h1 { margin-bottom: 10px; font-size: 2.5rem; }
+        p.subtitle { color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem; }
+
+        /* Auth Section */
+        .auth-card {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid var(--accent); border-radius: 12px; padding: 25px; margin-bottom: 40px;
+        }
+        .auth-card h3 { color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        code.inline { background: rgba(0,0,0,0.5); padding: 3px 6px; border-radius: 4px; color: #FFD700; font-family: monospace; font-size: 0.9rem; }
+
+        /* API Endpoint Cards */
+        .endpoint-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 30px; overflow: hidden; }
+        .endpoint-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.2); }
+        
+        .method { padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 800; font-family: monospace; text-transform: uppercase; }
+        .method.post { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .method.get { background: rgba(59, 130, 246, 0.15); color: var(--method-get); }
+        
+        .path { font-family: monospace; font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
+        
+        .endpoint-body { padding: 25px; }
+        .endpoint-body p { color: var(--text-secondary); margin-bottom: 20px; }
+        
+        /* Code Blocks */
+        .code-window { background: #000; border-radius: 8px; margin-bottom: 20px; border: 1px solid #222; }
+        .code-header { background: #111; padding: 8px 15px; border-bottom: 1px solid #222; font-size: 0.8rem; color: #888; font-family: monospace; border-radius: 8px 8px 0 0; }
+        .code-window pre { padding: 15px; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.9rem; color: #A6ACCD; }
+        
+        /* Syntax Colors */
+        .key { color: #82AAFF; }
+        .string { color: #C3E88D; }
+        .number { color: #F78C6C; }
+        .boolean { color: #FFCB6B; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 20px; }
+            h1 { font-size: 2rem; }
+            .endpoint-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">Spark<span>Docs</span></div>
+        <a href="/" class="btn-home">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Back to App
+        </a>
+    </header>
+
+    <main>
+        <h1>API Reference</h1>
+        <p class="subtitle">Complete documentation for Spark Studio's Elite Proxy Backend.</p>
+
+        <div class="auth-card">
+            <h3>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Authentication
+            </h3>
+            <p style="color:var(--text-secondary); margin-bottom: 15px;">All API endpoints are protected via an <strong>Elite Proxy Layer</strong>. You must pass your Custom Frontend Key (`SS_API_KEY`) as a Bearer Token in the headers.</p>
+            <div class="code-window">
+                <div class="code-header">HTTP Header</div>
+                <pre>Authorization: Bearer <span class="string">&lt;YOUR_SS_API_KEY&gt;</span></pre>
+            </div>
+        </div>
+
+        <!-- ENDPOINT 1: FAST SEARCH -->
+        <div class="endpoint-card">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="path">/api/fast-search</span>
+            </div>
+            <div class="endpoint-body">
+                <p>Performs a quick search query across the database. Returns matched URLs and snippets.</p>
+                <div class="code-window">
+                    <div class="code-header">Request Payload (JSON)</div>
+                    <pre>{
+  <span class="key">"query"</span>: <span class="string">"What is quantum mechanics?"</span>,
+  <span class="key">"threshold"</span>: <span class="number">0.7</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENDPOINT 2: DEEP RESEARCH START -->
+        <div class="endpoint-card">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="path">/api/research/start</span>
+            </div>
+            <div class="endpoint-body">
+                <p>Initiates a background multi-source scanning process. Returns a task ID to poll for status.</p>
+                <div class="code-window">
+                    <div class="code-header">Request Payload (JSON)</div>
+                    <pre>{
+  <span class="key">"query"</span>: <span class="string">"Eridanus Supervoid"</span>
+}</pre>
+                </div>
+                <div class="code-window">
+                    <div class="code-header">Response</div>
+                    <pre>{
+  <span class="key">"status"</span>: <span class="string">"processing"</span>,
+  <span class="key">"task_id"</span>: <span class="string">"task_abc123"</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENDPOINT 3: RESEARCH STATUS -->
+        <div class="endpoint-card">
+            <div class="endpoint-header">
+                <span class="method get">GET</span>
+                <span class="path">/api/research/status/{task_id}</span>
+            </div>
+            <div class="endpoint-body">
+                <p>Poll this endpoint to get live terminal logs and the final synthesis report.</p>
+                <div class="code-window">
+                    <div class="code-header">Response (When Complete)</div>
+                    <pre>{
+  <span class="key">"status"</span>: <span class="string">"complete"</span>,
+  <span class="key">"logs"</span>: [
+    { <span class="key">"msg"</span>: <span class="string">"Data extracted..."</span>, <span class="key">"color"</span>: <span class="string">"green"</span> }
+  ],
+  <span class="key">"result"</span>: {
+    <span class="key">"urls"</span>: [...],
+    <span class="key">"data"</span>: { ... Synthesis Report JSON ... }
+  }
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENDPOINT 4: EXTRACT -->
+        <div class="endpoint-card">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="path">/api/extract</span>
+            </div>
+            <div class="endpoint-body">
+                <p>Bypasses firewalls to extract clean text, images, and videos from a specific URL.</p>
+                <div class="code-window">
+                    <div class="code-header">Request Payload (JSON)</div>
+                    <pre>{
+  <span class="key">"url"</span>: <span class="string">"https://example.com/article"</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENDPOINT 5: GENERATE SCRIPT -->
+        <div class="endpoint-card">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="path">/api/generate-script</span>
+            </div>
+            <div class="endpoint-body">
+                <p>AI generates a highly engaging YouTube/Reels script based on the researched data.</p>
+                <div class="code-window">
+                    <div class="code-header">Request Payload (JSON)</div>
+                    <pre>{
+  <span class="key">"query"</span>: <span class="string">"Topic Name"</span>,
+  <span class="key">"research_data"</span>: { ... JSON from Deep Scan ... }
+}</pre>
+                </div>
+                <div class="code-window">
+                    <div class="code-header">Response</div>
+                    <pre>{
+  <span class="key">"script"</span>: <span class="string">"[Hook]\nDid you know..."</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENDPOINT 6: DISPATCH TO CREATOR -->
+        <div class="endpoint-card">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="path">/api/dispatch-to-creator</span>
+            </div>
+            <div class="endpoint-body">
+                <p>Sends the finalized script to the Vidspark API for video generation.</p>
+                <div class="code-window">
+                    <div class="code-header">Request Payload (JSON)</div>
+                    <pre>{
+  <span class="key">"script_text"</span>: <span class="string">"The final edited script..."</span>,
+  <span class="key">"topic"</span>: <span class="string">"Video Title"</span>,
+  <span class="key">"orientation"</span>: <span class="string">"vertical"</span> <span class="string">// or "horizontal"</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>
