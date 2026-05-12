@@ -255,7 +255,7 @@
         @keyframes blink { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
         @keyframes scanMove { 0% { transform: translateY(-4px) translateX(-3px); } 100% { transform: translateY(4px) translateX(3px); } }
 
-        /* Settings CSS */
+        /* Settings Card */
         .settings-card { background: var(--bg-card); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
         .settings-card label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.9rem; }
 
@@ -300,13 +300,12 @@
         <a class="nav-item" data-target="page-media">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Media
         </a>
-        <!-- Settings Tab -->
         <a class="nav-item" data-target="page-settings">
             <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Settings
         </a>
     </nav>
 
-    <!-- Active Tasks Widget -->
+    <!-- ⚡ Active Tasks Widget -->
     <div id="active-tasks-widget" onclick="navigateTo('page-history'); loadHistory();">
         <div class="spinner" style="border-top-color: white; border-width: 2px;"></div>
         <span id="active-task-count">1 Running</span>
@@ -355,16 +354,16 @@
                 </button>
             </div>
             
-            <!-- Terminal View -->
+            <!-- 1. Terminal View -->
             <div id="terminal-view" class="terminal-container" style="display: none;"></div>
             
-            <!-- Synthesis Result -->
+            <!-- 2. Synthesis Result (Knowledge Tension & Lore) -->
             <div id="synthesis-result" class="synthesis-card"></div>
 
-            <!-- Scanned Sources Container -->
+            <!-- 3. Google Style Scanned Sources Container (View Sources Button will load here) -->
             <div id="deep-results-container" class="results-container"></div>
 
-            <!-- Script Editor & Video Creator -->
+            <!-- 4. Script Editor & Video Creator -->
             <div id="script-editor-section" style="display: none; margin-top: 30px; animation: fadeIn 0.4s ease;">
                 <h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                     <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> 
@@ -470,30 +469,41 @@
 
     <script>
         // ==========================================
-        // ⚡ PWA Setup & Auth
+        // ⚡ Service Worker Registration (PWA)
         // ==========================================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js').catch(err => console.error('SW Error', err));
+                navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('Service Worker Registered!', reg))
+                .catch(err => console.error('Service Worker Error', err));
             });
         }
+
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); deferredPrompt = e;
+            e.preventDefault();
+            deferredPrompt = e;
             const installBtn = document.getElementById('install-pwa-btn');
             const pwaStatus = document.getElementById('pwa-status');
             if(installBtn) {
-                installBtn.style.display = 'inline-flex'; pwaStatus.style.display = 'none';
+                installBtn.style.display = 'inline-flex';
+                pwaStatus.style.display = 'none';
                 installBtn.addEventListener('click', () => {
                     deferredPrompt.prompt();
                     deferredPrompt.userChoice.then((choiceResult) => {
-                        deferredPrompt = null; installBtn.style.display = 'none';
-                        pwaStatus.style.display = 'block'; pwaStatus.innerText = "App installed successfully!";
+                        if (choiceResult.outcome === 'accepted') { console.log('User accepted PWA prompt'); }
+                        deferredPrompt = null;
+                        installBtn.style.display = 'none';
+                        pwaStatus.style.display = 'block';
+                        pwaStatus.innerText = "App installed successfully!";
                     });
                 });
             }
         });
 
+        // ==========================================
+        // ⚡ API Key Saving Logic & Fetch Wrapper
+        // ==========================================
         function saveApiKey() {
             const key = document.getElementById('api-key-input').value.trim();
             localStorage.setItem('sparkApiToken', key);
@@ -501,6 +511,7 @@
             status.style.display = 'block';
             setTimeout(() => status.style.display = 'none', 3000);
         }
+
         document.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('sparkApiToken');
             if(savedKey) document.getElementById('api-key-input').value = savedKey;
@@ -512,6 +523,7 @@
             if (token) options.headers['Authorization'] = `Bearer ${token}`;
             return await fetch(url, options);
         }
+
 
         // --- System States & Caching ---
         let currentResearchData = null; 
@@ -535,7 +547,7 @@
                 history.pushState({ page: targetId }, "", `#${targetId}`);
             }
 
-            // ⚡ Auto-Extract Media When Entering Media Page (if background loading was paused)
+            // Auto-Extract Media When Entering Media Page
             if(targetId === 'page-media') {
                 startSequentialMediaLoading();
             }
@@ -651,7 +663,7 @@
                 if (data.results && data.results.length > 0) {
                     const newUrls = data.results.map(r => r.url);
                     newUrls.forEach(u => {
-                        if(!pendingMediaUrls.includes(u)) pendingMediaUrls.push(u);
+                        if(!pendingMediaUrls.includes(u)) pendingMediaUrls.push(u); // Feed into media queue
                     });
                     data.results.forEach(res => {
                         const div = document.createElement('div');
@@ -746,7 +758,7 @@
             addTerminalLog("> Task shifted to background. Keep exploring!", "var(--success)");
         }
 
-        // ⚡ UPDATE DEEP SEARCH UI (With aggressive parsing)
+        // ⚡ UPDATE DEEP SEARCH UI 
         function updateDeepSearchUI(data) {
             const searchBtn = document.getElementById('deep-search-btn');
             
@@ -767,15 +779,14 @@
                 
                 addTerminalLog("✅ Data safely retrieved from server.", "var(--success)", false);
 
-                // Aggressive Parsing to find data
                 let payload = data.result || data; 
                 let synthesisData = payload.data || payload.synthesis || payload; 
                 let urlsData = payload.urls || payload.sources || (payload.data && payload.data.urls) || [];
                 
-                // 1. Render the Report
+                // 1. Render the AI Synthesis Report 
                 renderSynthesis(synthesisData);
 
-                // 2. Render Google Style URLs & Trigger Media Scraping
+                // 2. Render Google Style URLs
                 if (urlsData && urlsData.length > 0) {
                     urlsData.forEach(u => {
                         let urlStr = typeof u === 'string' ? u : (u.url || u.link);
@@ -785,7 +796,7 @@
                     });
                     renderSearchResults(urlsData);
                     
-                    // ⚡ FORCE TRIGGER BACKGROUND MEDIA LOADING HERE!
+                    // ⚡ FORCE TRIGGER BACKGROUND MEDIA SCRAPING HERE
                     startSequentialMediaLoading();
                 } else {
                     const container = document.getElementById('deep-results-container');
@@ -820,7 +831,7 @@
                 let snippet = item.snippet || 'Extracted document from search source...';
                 
                 if(!url) return;
-                
+
                 html += `
                 <div style="margin-bottom: 15px; background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 8px; border-left: 3px solid var(--accent);">
                     <a href="${url}" onclick="event.preventDefault(); openArticleView('${url}')" style="color:var(--accent); text-decoration:none; font-weight:bold; font-size:1.05rem; display:block; margin-bottom:6px;">${title}</a>
@@ -977,69 +988,106 @@
         }
 
         // =========================================================================
-        // RENDERING & SCRIPT GEN (⚡ FIXED TO SHOW ALL DATA FORMATS)
+        // ⚡ RENDERING & SCRIPT GEN (ULTIMATE BULLETPROOF FALLBACK)
         // =========================================================================
 
         function renderSynthesis(jsonData) {
             const synthResult = document.getElementById('synthesis-result');
             let html = '';
-            
+
             if (!jsonData) {
                 synthResult.innerHTML = '<p style="color:var(--text-muted);">No report data available.</p>';
                 synthResult.style.display = 'block';
                 return;
             }
 
-            // 1. Check for Lore Engine Format
+            // Fallback 1: If it's just a raw text string
+            if (typeof jsonData === 'string') {
+                html += `<h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">AI Synthesis Report</h3>`;
+                html += `<div style="color:var(--text-primary); font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${jsonData}</div>`;
+                synthResult.innerHTML = html;
+                synthResult.style.display = 'block';
+                currentResearchData = jsonData;
+                document.getElementById('generate-script-btn').style.display = 'flex';
+                return;
+            }
+
             let loreData = jsonData.lore_engine || jsonData.lore;
-            if (loreData && loreData.narrative_diamonds && loreData.narrative_diamonds.length > 0) {
+            let conflictData = jsonData.conflict_engine || jsonData.conflicts;
+            let renderedSomething = false;
+
+            // --- LORE ENGINE ---
+            if (loreData) {
                 html += `<h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                             <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg> 
                             Hidden Lore & Stories
                         </h3>`;
-                loreData.narrative_diamonds.forEach(story => {
-                    html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-left: 3px solid #FFD700; border-radius: 6px; margin-bottom: 12px;"><span style="background:#FFD700; color:black; font-size:0.7rem; font-weight:bold; padding:2px 6px; border-radius:4px;">${story.hook_type || 'Lore'}</span><p style="color:var(--text-primary); font-size:0.95rem; margin-top:8px; line-height: 1.6;">${story.story_or_anecdote}</p></div>`;
-                });
+                
+                if (loreData.narrative_diamonds && Array.isArray(loreData.narrative_diamonds) && loreData.narrative_diamonds.length > 0) {
+                    loreData.narrative_diamonds.forEach(story => {
+                        html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-left: 3px solid #FFD700; border-radius: 6px; margin-bottom: 12px;"><span style="background:#FFD700; color:black; font-size:0.7rem; font-weight:bold; padding:2px 6px; border-radius:4px;">${story.hook_type || 'Lore'}</span><p style="color:var(--text-primary); font-size:0.95rem; margin-top:8px; line-height: 1.6;">${story.story_or_anecdote}</p></div>`;
+                    });
+                } else {
+                    html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 6px; color:var(--text-primary); font-size: 0.85rem; white-space: pre-wrap; font-family: monospace; border: 1px solid var(--border-color);">${JSON.stringify(loreData, null, 2)}</div>`;
+                }
+                renderedSomething = true;
             }
 
-            // 2. Check for Conflict Engine Format
-            let conflictData = jsonData.conflict_engine || jsonData.conflicts; 
+            // --- CONFLICT ENGINE ---
             if (conflictData) {
                 html += `<h3 style="color:var(--accent); margin-bottom:15px; margin-top:25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                             <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> 
                             Knowledge Tension Report
                         </h3>`;
+                
+                let hasFormattedData = false;
+                
                 if (conflictData.error) {
                     html += `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 6px; color: var(--danger); margin-bottom: 20px;"><strong style="display:block; margin-bottom:5px;">⚠️ AI Error:</strong> <span style="font-family: monospace; font-size: 0.85rem;">${conflictData.error}</span></div>`;
+                    hasFormattedData = true;
                 } else {
+                    // Consensus Check
                     if (conflictData.core_synthesis) {
-                        html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--success); margin-bottom:5px;">Scientific Consensus</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${conflictData.core_synthesis.scientific_consensus}</p></div>`;
-                        html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--danger); margin-bottom:5px;">Alternative Claims</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${conflictData.core_synthesis.mythological_and_fringe_claims}</p></div>`;
+                        let consensus = conflictData.core_synthesis.scientific_consensus || conflictData.core_synthesis.consensus;
+                        let alternative = conflictData.core_synthesis.mythological_and_fringe_claims || conflictData.core_synthesis.alternative;
+                        if(consensus) { html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--success); margin-bottom:5px;">Scientific Consensus</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${consensus}</p></div>`; hasFormattedData = true; }
+                        if(alternative) { html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--danger); margin-bottom:5px;">Alternative Claims</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${alternative}</p></div>`; hasFormattedData = true; }
                     }
-                    if (conflictData.theory_conflict_engine && conflictData.theory_conflict_engine.length > 0) {
+                    
+                    // Theories/Debate Check
+                    let theories = conflictData.theory_conflict_engine || conflictData.theories || conflictData.conflicts;
+                    if (theories && Array.isArray(theories) && theories.length > 0) {
                         html += `<h4 style="color:var(--accent); margin-bottom:10px; margin-top:20px;">⚡ Key Conflicts Detected</h4>`;
-                        conflictData.theory_conflict_engine.forEach(conflict => {
-                            html += `<div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--accent); border-radius: 6px; margin-bottom: 10px;"><p style="color:var(--text-primary); font-weight:bold; margin-bottom: 8px;">Debate: ${conflict.debate_topic}</p><p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom: 4px;"><strong>Science:</strong> ${conflict.science_perspective}</p><p style="color:var(--text-secondary); font-size:0.85rem;"><strong>Alternative:</strong> ${conflict.alternative_perspective}</p><div style="margin-top: 8px; font-size: 0.8rem; color:var(--text-muted);">Tension Level: <span style="color:${conflict.tension_level === 'High' ? 'var(--danger)' : 'var(--accent)'}">${conflict.tension_level}</span></div></div>`;
+                        theories.forEach(c => {
+                            let debate = c.debate_topic || c.topic || "Debate";
+                            let science = c.science_perspective || c.mainstream || "N/A";
+                            let alt = c.alternative_perspective || c.fringe || "N/A";
+                            let tension = c.tension_level || "Unknown";
+                            html += `<div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--accent); border-radius: 6px; margin-bottom: 10px;"><p style="color:var(--text-primary); font-weight:bold; margin-bottom: 8px;">Debate: ${debate}</p><p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom: 4px;"><strong>Science:</strong> ${science}</p><p style="color:var(--text-secondary); font-size:0.85rem;"><strong>Alternative:</strong> ${alt}</p><div style="margin-top: 8px; font-size: 0.8rem; color:var(--text-muted);">Tension Level: <span style="color:${tension === 'High' ? 'var(--danger)' : 'var(--accent)'}">${tension}</span></div></div>`;
                         });
+                        hasFormattedData = true;
                     }
                 }
+
+                // If nothing matched the expected format, dump it raw!
+                if (!hasFormattedData) {
+                    html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 6px; color:var(--text-primary); font-size: 0.85rem; white-space: pre-wrap; font-family: monospace; border: 1px solid var(--border-color); overflow-x: auto;">${JSON.stringify(conflictData, null, 2)}</div>`;
+                }
+                renderedSomething = true;
             }
 
-            // 3. ⚡ FALLBACK: If the backend sends something else (Text, Markdown, or Raw JSON)
-            if (!loreData && !conflictData) {
+            // --- ULTIMATE FALLBACK ---
+            if (!renderedSomething) {
                 html += `<h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                             <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg> 
                             AI Synthesis Report
                         </h3>`;
-                        
-                if (typeof jsonData === 'string') {
-                    // Render simple text/markdown
-                    html += `<div style="color:var(--text-primary); font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${jsonData}</div>`;
-                } else if (typeof jsonData === 'object' && Object.keys(jsonData).length > 0) {
-                    // Render raw JSON neatly
-                    html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 6px; color:var(--text-primary); font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; font-family: monospace; border: 1px solid var(--border-color);">${JSON.stringify(jsonData, null, 2)}</div>`;
+                
+                let textData = jsonData.report || jsonData.text || jsonData.summary || jsonData.content || jsonData.result;
+                if (textData && typeof textData === 'string') {
+                    html += `<div style="color:var(--text-primary); font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${textData}</div>`;
                 } else {
-                    html += '<p style="color:var(--text-muted);">Report data is empty.</p>';
+                    html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 6px; color:var(--text-primary); font-size: 0.85rem; white-space: pre-wrap; font-family: monospace; border: 1px solid var(--border-color); overflow-x: auto;">${JSON.stringify(jsonData, null, 2)}</div>`;
                 }
             }
 
@@ -1171,7 +1219,9 @@
             if(history.state && history.state.modal === 'article') history.back();
         }
 
-        // --- Media Filter & ⚡ BACKGROUND Sequential Loading Logic ---
+        // =========================================================================
+        // ⚡ BACKGROUND Media Loading Logic
+        // =========================================================================
         function isJunkMedia(url) {
             if(!url) return true;
             const lowerUrl = url.toLowerCase();
@@ -1184,21 +1234,15 @@
 
         async function startSequentialMediaLoading() {
             if (isExtractingMedia || mediaProcessedIndex >= pendingMediaUrls.length) return;
-            
             isExtractingMedia = true;
+            
             const statusDiv = document.getElementById('media-status');
             const statusText = document.getElementById('media-status-text');
-            
-            // Only show the UI loading bar if we are actually ON the media page
-            if(document.getElementById('page-media').classList.contains('active')) {
-                statusDiv.style.display = 'flex';
-            }
 
             while (mediaProcessedIndex < pendingMediaUrls.length) {
-                // ⚡ Notice: NO "return" here if we leave the page. It keeps running in the background!
-                
                 let url = pendingMediaUrls[mediaProcessedIndex];
                 
+                // Show status ONLY if user is currently looking at the Media page
                 if(document.getElementById('page-media').classList.contains('active')) {
                     statusDiv.style.display = 'flex';
                     statusText.innerText = `Extracting visual assets from: ${url.substring(0,35)}...`;
@@ -1227,7 +1271,7 @@
                 }
                 
                 mediaProcessedIndex++;
-                await new Promise(r => setTimeout(r, 1500)); // Be polite to the backend API
+                await new Promise(r => setTimeout(r, 1500)); // Delay so backend doesn't crash
             }
             
             isExtractingMedia = false;
@@ -1253,7 +1297,7 @@
                 });
             }
             
-            // Re-render UI ONLY if the user is looking at the Media page
+            // Only force re-render UI if user is actively on Media Page
             if(addedNew && document.getElementById('page-media').classList.contains('active')) {
                 renderMediaGrid();
             }
