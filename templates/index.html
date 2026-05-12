@@ -469,41 +469,30 @@
 
     <script>
         // ==========================================
-        // ⚡ Service Worker Registration (PWA)
+        // ⚡ PWA Setup & Auth
         // ==========================================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('Service Worker Registered!', reg))
-                .catch(err => console.error('Service Worker Error', err));
+                navigator.serviceWorker.register('/service-worker.js').catch(err => console.error('SW Error', err));
             });
         }
-
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
+            e.preventDefault(); deferredPrompt = e;
             const installBtn = document.getElementById('install-pwa-btn');
             const pwaStatus = document.getElementById('pwa-status');
             if(installBtn) {
-                installBtn.style.display = 'inline-flex';
-                pwaStatus.style.display = 'none';
+                installBtn.style.display = 'inline-flex'; pwaStatus.style.display = 'none';
                 installBtn.addEventListener('click', () => {
                     deferredPrompt.prompt();
                     deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') { console.log('User accepted PWA prompt'); }
-                        deferredPrompt = null;
-                        installBtn.style.display = 'none';
-                        pwaStatus.style.display = 'block';
-                        pwaStatus.innerText = "App installed successfully!";
+                        deferredPrompt = null; installBtn.style.display = 'none';
+                        pwaStatus.style.display = 'block'; pwaStatus.innerText = "App installed successfully!";
                     });
                 });
             }
         });
 
-        // ==========================================
-        // ⚡ API Key Saving Logic & Fetch Wrapper
-        // ==========================================
         function saveApiKey() {
             const key = document.getElementById('api-key-input').value.trim();
             localStorage.setItem('sparkApiToken', key);
@@ -511,7 +500,6 @@
             status.style.display = 'block';
             setTimeout(() => status.style.display = 'none', 3000);
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('sparkApiToken');
             if(savedKey) document.getElementById('api-key-input').value = savedKey;
@@ -523,7 +511,6 @@
             if (token) options.headers['Authorization'] = `Bearer ${token}`;
             return await fetch(url, options);
         }
-
 
         // --- System States & Caching ---
         let currentResearchData = null; 
@@ -543,83 +530,46 @@
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
 
-            if (pushToHistory) {
-                history.pushState({ page: targetId }, "", `#${targetId}`);
-            }
-
-            // Auto-Extract Media When Entering Media Page
-            if(targetId === 'page-media') {
-                startSequentialMediaLoading();
-            }
+            if (pushToHistory) history.pushState({ page: targetId }, "", `#${targetId}`);
+            if(targetId === 'page-media') startSequentialMediaLoading();
         }
 
         window.addEventListener('popstate', (e) => {
             if (e.state && e.state.page) switchPage(e.state.page, false);
             else switchPage('page-search', false);
         });
-
         history.replaceState({ page: 'page-search' }, "", "#page-search");
         function navigateTo(pageId) { switchPage(pageId); }
-        function navigateToMedia(type) {
-            currentMediaTypeFilter = type;
-            switchPage('page-media');
-            renderMediaGrid();
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebar-overlay').classList.toggle('open');
-        }
-
+        function navigateToMedia(type) { currentMediaTypeFilter = type; switchPage('page-media'); renderMediaGrid(); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); }
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function() {
-                if(window.innerWidth < 768 && document.getElementById('sidebar').classList.contains('open')) {
-                    toggleSidebar();
-                }
-                const targetId = this.getAttribute('data-target');
-                switchPage(targetId);
+                if(window.innerWidth < 768 && document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
+                switchPage(this.getAttribute('data-target'));
             });
         });
 
         // --- Terminal & Offline Logic ---
-        function saveTerminalState() {
-            const term = document.getElementById('terminal-view');
-            localStorage.setItem('sparkTerminalHtml', term.innerHTML);
-        }
-
+        function saveTerminalState() { localStorage.setItem('sparkTerminalHtml', document.getElementById('terminal-view').innerHTML); }
         function restoreTerminalState() {
             const savedHtml = localStorage.getItem('sparkTerminalHtml');
             if (savedHtml) {
                 const term = document.getElementById('terminal-view');
-                term.style.display = 'block';
-                term.innerHTML = savedHtml;
-                term.scrollTop = term.scrollHeight;
+                term.style.display = 'block'; term.innerHTML = savedHtml; term.scrollTop = term.scrollHeight;
             }
         }
-
         document.addEventListener('DOMContentLoaded', restoreTerminalState);
         window.addEventListener('offline', () => addTerminalLog("⚠️ INTERNET DISCONNECTED. State saved. Retries paused.", "var(--danger)"));
-        window.addEventListener('online', () => {
-            addTerminalLog("🌐 INTERNET RESTORED. System online.", "var(--success)");
-            pollActiveTasks();
-        });
+        window.addEventListener('online', () => { addTerminalLog("🌐 INTERNET RESTORED. System online.", "var(--success)"); pollActiveTasks(); });
 
         let processingNode = null;
         function addTerminalLog(msg, color="var(--text-secondary)", isProcessing=false) {
             const term = document.getElementById('terminal-view');
             if (processingNode && processingNode.parentNode) processingNode.parentNode.removeChild(processingNode);
-            const line = document.createElement('div');
-            line.className = 'terminal-line';
-            if (isProcessing) {
-                line.innerHTML = `<span style="color:${color}">></span> <span style="color:${color}">${msg}</span><span class="blinking-dots">...</span>`;
-                processingNode = line;
-            } else {
-                line.innerHTML = `<span style="color:${color}">></span> <span style="color:${color}">${msg}</span>`;
-                processingNode = null;
-            }
-            term.appendChild(line);
-            term.scrollTop = term.scrollHeight;
-            saveTerminalState();
+            const line = document.createElement('div'); line.className = 'terminal-line';
+            if (isProcessing) { line.innerHTML = `<span style="color:${color}">></span> <span style="color:${color}">${msg}</span><span class="blinking-dots">...</span>`; processingNode = line; } 
+            else { line.innerHTML = `<span style="color:${color}">></span> <span style="color:${color}">${msg}</span>`; processingNode = null; }
+            term.appendChild(line); term.scrollTop = term.scrollHeight; saveTerminalState();
         }
 
         function handleEnter(e, inputId) {
@@ -629,172 +579,120 @@
                 if (inputId === 'media-url-input') executeMediaScrape();
             }
         }
+        function showLoader(text, show) { document.getElementById('loader-text').innerText = text; document.getElementById('global-loader').style.display = show ? 'flex' : 'none'; }
 
-        function showLoader(text, show) {
-            const loader = document.getElementById('global-loader');
-            document.getElementById('loader-text').innerText = text;
-            loader.style.display = show ? 'flex' : 'none';
-        }
-
-        // --- Core Fast Search ---
+        // --- Fast Search ---
         async function executeSmartInput() {
             const input = document.getElementById('smart-input-field').value.trim();
             if (!input) return;
-            const isUrl = /^(https?:\/\/)/i.test(input);
-            if (isUrl) {
+            if (/^(https?:\/\/)/i.test(input)) {
                 if(!pendingMediaUrls.includes(input)) pendingMediaUrls.push(input);
                 openArticleView(input);
-            } else {
-                performFastSearch(input);
-            }
+            } else performFastSearch(input);
         }
 
         async function performFastSearch(query) {
-            const container = document.getElementById('search-results-container');
-            container.innerHTML = '';
+            const container = document.getElementById('search-results-container'); container.innerHTML = '';
             showLoader("Loading from database...", true);
             try {
-                const response = await fetchWithAuth('/api/fast-search', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query, threshold: 0.7 })
-                });
-                const data = await response.json();
-                showLoader("", false);
+                const response = await fetchWithAuth('/api/fast-search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query, threshold: 0.7 }) });
+                const data = await response.json(); showLoader("", false);
                 if (data.results && data.results.length > 0) {
-                    const newUrls = data.results.map(r => r.url);
-                    newUrls.forEach(u => {
-                        if(!pendingMediaUrls.includes(u)) pendingMediaUrls.push(u); // Feed into media queue
-                    });
                     data.results.forEach(res => {
-                        const div = document.createElement('div');
-                        div.className = 'search-result';
-                        div.innerHTML = `
-                            <div class="url">
-                                <svg width="14" height="14" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-                                ${res.url}
-                            </div>
-                            <a href="#" class="title" onclick="event.preventDefault(); openArticleView('${res.url}')">${res.title}</a>
-                            <div class="snippet">${res.snippet}...</div>
-                        `;
-                        container.appendChild(div);
+                        if(!pendingMediaUrls.includes(res.url)) pendingMediaUrls.push(res.url);
+                        container.innerHTML += `
+                            <div class="search-result">
+                                <div class="url"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg> ${res.url}</div>
+                                <a href="#" class="title" onclick="event.preventDefault(); openArticleView('${res.url}')">${res.title}</a>
+                                <div class="snippet">${res.snippet}...</div>
+                            </div>`;
                     });
-                } else {
-                    container.innerHTML = '<p style="color:var(--text-secondary)">No results found.</p>';
-                }
-            } catch (err) {
-                showLoader("", false);
-                container.innerHTML = `<p style="color:var(--danger)">Error: ${err.message}</p>`;
-            }
+                } else container.innerHTML = '<p style="color:var(--text-secondary)">No results found.</p>';
+            } catch (err) { showLoader("", false); container.innerHTML = `<p style="color:var(--danger)">Error: ${err.message}</p>`; }
         }
 
-        // =========================================================================
-        // 🚀 POLLING & BACKGROUND TASK LOGIC
-        // =========================================================================
-
+        // --- POLLING & BACKGROUND TASK LOGIC ---
         let activeTasks = JSON.parse(localStorage.getItem('sparkActiveTasks')) || {};
-        let currentViewedTaskId = null;
-        let renderedLogsCount = 0;
-        let globalPoller = null;
-
+        let currentViewedTaskId = null; let renderedLogsCount = 0; let globalPoller = null;
         const scanStaticSvg = `<svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
-        const scanAnimatedSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" opacity="0.5"/>
-            <polyline points="14 2 14 8 20 8" opacity="0.5"/>
-            <g style="animation: scanMove 1.2s ease-in-out infinite alternate;">
-                <circle cx="11" cy="14" r="4" stroke="var(--accent)"/>
-                <line x1="13.8" y1="16.8" x2="18" y2="21" stroke="var(--accent)"/>
-            </g>
-        </svg>`;
+        const scanAnimatedSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" opacity="0.5"/><polyline points="14 2 14 8 20 8" opacity="0.5"/><g style="animation: scanMove 1.2s ease-in-out infinite alternate;"><circle cx="11" cy="14" r="4" stroke="var(--accent)"/><line x1="13.8" y1="16.8" x2="18" y2="21" stroke="var(--accent)"/></g></svg>`;
 
-        function initGlobalPoller() {
-            updateActiveTasksUI();
-            if(!globalPoller) {
-                globalPoller = setInterval(pollActiveTasks, 3000); 
-            }
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') pollActiveTasks();
-        });
+        function initGlobalPoller() { updateActiveTasksUI(); if(!globalPoller) globalPoller = setInterval(pollActiveTasks, 3000); }
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pollActiveTasks(); });
 
         async function pollActiveTasks() {
-            const taskIds = Object.keys(activeTasks);
-            if(taskIds.length === 0) return;
-
+            const taskIds = Object.keys(activeTasks); if(taskIds.length === 0) return;
             for (const taskId of taskIds) {
                 try {
                     const response = await fetchWithAuth(`/api/research/status/${taskId}`);
-                    if (!response.ok) continue;
-                    const data = await response.json();
-
-                    if (taskId === currentViewedTaskId && document.getElementById('page-deep-search').classList.contains('active')) {
-                        updateDeepSearchUI(data);
-                    }
-
+                    if (!response.ok) continue; const data = await response.json();
+                    if (taskId === currentViewedTaskId && document.getElementById('page-deep-search').classList.contains('active')) updateDeepSearchUI(data);
                     if (data.status === 'complete' || data.status === 'failed') {
-                        delete activeTasks[taskId];
-                        localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
-                        updateActiveTasksUI();
+                        delete activeTasks[taskId]; localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks)); updateActiveTasksUI();
                     }
-                } catch (e) {
-                    console.log(`Polling issue for ${taskId}, retrying...`);
-                }
+                } catch (e) {}
             }
         }
-
         function updateActiveTasksUI() {
-            const count = Object.keys(activeTasks).length;
-            const widget = document.getElementById('active-tasks-widget');
-            if (count > 0) {
-                document.getElementById('active-task-count').innerText = `${count} Running Task${count>1?'s':''}`;
-                widget.style.display = 'flex';
-            } else {
-                widget.style.display = 'none';
-            }
+            const count = Object.keys(activeTasks).length; const widget = document.getElementById('active-tasks-widget');
+            if (count > 0) { document.getElementById('active-task-count').innerText = `${count} Running Task${count>1?'s':''}`; widget.style.display = 'flex'; } else widget.style.display = 'none';
         }
+        function sendTaskToBackground() { navigateTo('page-search'); addTerminalLog("> Task shifted to background. Keep exploring!", "var(--success)"); }
 
-        function sendTaskToBackground() {
-            navigateTo('page-search');
-            addTerminalLog("> Task shifted to background. Keep exploring!", "var(--success)");
+        // =========================================================================
+        // ⚡ AGGRESSIVE URL FINDER (Finds sources anywhere in the JSON)
+        // =========================================================================
+        function extractAllUrlsRecursively(obj, foundUrls = []) {
+            if (!obj) return foundUrls;
+            if (Array.isArray(obj)) {
+                obj.forEach(item => extractAllUrlsRecursively(item, foundUrls));
+            } else if (typeof obj === 'object') {
+                let extractedUrl = obj.source_url || obj.url || obj.link;
+                if (extractedUrl && typeof extractedUrl === 'string' && extractedUrl.startsWith('http')) {
+                    // Check if we already have it to avoid duplicates
+                    if (!foundUrls.some(u => u.url === extractedUrl)) {
+                        foundUrls.push({
+                            url: extractedUrl,
+                            title: obj.claim || obj.title || obj.hook_type || "Extracted Document",
+                            snippet: obj.story_or_anecdote || obj.snippet || "Click to view content and extract media."
+                        });
+                    }
+                }
+                Object.values(obj).forEach(val => extractAllUrlsRecursively(val, foundUrls));
+            }
+            return foundUrls;
         }
 
         // ⚡ UPDATE DEEP SEARCH UI 
         function updateDeepSearchUI(data) {
             const searchBtn = document.getElementById('deep-search-btn');
             
-            // Print new logs
             if (data.logs && data.logs.length > renderedLogsCount) {
                 for (let i = renderedLogsCount; i < data.logs.length; i++) {
                     const log = data.logs[i];
-                    const isProcessing = (data.status === 'processing' && i === data.logs.length - 1);
-                    addTerminalLog(log.msg, log.color || "var(--text-secondary)", isProcessing);
+                    addTerminalLog(log.msg, log.color || "var(--text-secondary)", (data.status === 'processing' && i === data.logs.length - 1));
                 }
                 renderedLogsCount = data.logs.length;
             }
 
             if (data.status === 'complete' && !document.getElementById('synthesis-result').innerHTML) {
-                searchBtn.innerHTML = scanStaticSvg;
-                searchBtn.disabled = false;
-                document.getElementById('run-bg-btn').style.display = 'none';
-                
+                searchBtn.innerHTML = scanStaticSvg; searchBtn.disabled = false; document.getElementById('run-bg-btn').style.display = 'none';
                 addTerminalLog("✅ Data safely retrieved from server.", "var(--success)", false);
 
                 let payload = data.result || data; 
                 let synthesisData = payload.data || payload.synthesis || payload; 
-                let urlsData = payload.urls || payload.sources || (payload.data && payload.data.urls) || [];
                 
                 // 1. Render the AI Synthesis Report 
                 renderSynthesis(synthesisData);
 
-                // 2. Render Google Style URLs
-                if (urlsData && urlsData.length > 0) {
-                    urlsData.forEach(u => {
-                        let urlStr = typeof u === 'string' ? u : (u.url || u.link);
-                        if(urlStr && typeof urlStr === 'string' && urlStr.startsWith('http')) {
-                            if(!pendingMediaUrls.includes(urlStr)) pendingMediaUrls.push(urlStr); 
-                        }
+                // 2. Aggressive Source URL Extraction
+                let aggressiveUrls = extractAllUrlsRecursively(payload);
+
+                if (aggressiveUrls.length > 0) {
+                    aggressiveUrls.forEach(u => {
+                        if(!pendingMediaUrls.includes(u.url)) pendingMediaUrls.push(u.url); 
                     });
-                    renderSearchResults(urlsData);
+                    renderSearchResults(aggressiveUrls);
                     
                     // ⚡ FORCE TRIGGER BACKGROUND MEDIA SCRAPING HERE
                     startSequentialMediaLoading();
@@ -805,190 +703,95 @@
                 }
             } 
             else if (data.status === 'failed') {
-                searchBtn.innerHTML = scanStaticSvg;
-                searchBtn.disabled = false;
-                document.getElementById('run-bg-btn').style.display = 'none';
+                searchBtn.innerHTML = scanStaticSvg; searchBtn.disabled = false; document.getElementById('run-bg-btn').style.display = 'none';
                 addTerminalLog(`❌ Task Failed: ${data.error}`, "var(--danger)");
             }
         }
 
-        // ⚡ RENDER GOOGLE STYLE LIST
         function renderSearchResults(urlsData) {
             const container = document.getElementById('deep-results-container');
-            
-            let html = `
-            <div style="margin-top: 25px; text-align: center;">
-                <button id="toggle-sources-btn" style="background: var(--bg-card); border: 1px solid var(--accent); color: var(--accent); width: 100%; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s ease;" onclick="toggleSourcesList()">
-                    <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    View Extracted Sources (${urlsData.length})
-                </button>
-            </div>
-            <div id="sources-list-wrapper" style="display: none; margin-top: 15px; animation: fadeIn 0.3s ease;">`;
+            let html = `<div style="margin-top: 25px; text-align: center;"><button id="toggle-sources-btn" style="background: var(--bg-card); border: 1px solid var(--accent); color: var(--accent); width: 100%; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s ease;" onclick="toggleSourcesList()"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg> View Extracted Sources (${urlsData.length})</button></div><div id="sources-list-wrapper" style="display: none; margin-top: 15px; animation: fadeIn 0.3s ease;">`;
 
             urlsData.forEach(item => {
-                let title = item.title || "Source Link";
-                let url = item.url || item.link || (typeof item === 'string' ? item : null);
-                let snippet = item.snippet || 'Extracted document from search source...';
-                
-                if(!url) return;
-
                 html += `
                 <div style="margin-bottom: 15px; background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 8px; border-left: 3px solid var(--accent);">
-                    <a href="${url}" onclick="event.preventDefault(); openArticleView('${url}')" style="color:var(--accent); text-decoration:none; font-weight:bold; font-size:1.05rem; display:block; margin-bottom:6px;">${title}</a>
-                    <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5; margin-bottom: 6px;">${snippet.substring(0, 160)}...</p>
-                    <div class="url" style="color:var(--text-muted); font-size:0.75rem; word-break:break-all;">${url}</div>
+                    <a href="${item.url}" onclick="event.preventDefault(); openArticleView('${item.url}')" style="color:var(--accent); text-decoration:none; font-weight:bold; font-size:1.05rem; display:block; margin-bottom:6px;">${item.title}</a>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5; margin-bottom: 6px;">${item.snippet.substring(0, 160)}...</p>
+                    <div class="url" style="color:var(--text-muted); font-size:0.75rem; word-break:break-all;">${item.url}</div>
                 </div>`;
             });
-
             html += `</div>`;
-            container.innerHTML = html;
-            container.style.display = 'block';
+            container.innerHTML = html; container.style.display = 'block';
         }
 
         function toggleSourcesList() {
             const wrapper = document.getElementById('sources-list-wrapper');
-            if(wrapper.style.display === 'none') wrapper.style.display = 'block';
-            else wrapper.style.display = 'none';
+            wrapper.style.display = wrapper.style.display === 'none' ? 'block' : 'none';
         }
 
         async function executeDeepSearch() {
-            const query = document.getElementById('deep-input-field').value.trim();
-            if (!query) return;
-
-            // UI Reset
-            document.getElementById('terminal-view').style.display = 'block';
-            document.getElementById('terminal-view').innerHTML = '';
-            document.getElementById('synthesis-result').style.display = 'none';
-            document.getElementById('synthesis-result').innerHTML = '';
-            document.getElementById('deep-results-container').style.display = 'none';
-            document.getElementById('deep-results-container').innerHTML = '';
-            document.getElementById('script-editor-section').style.display = 'none';
-            document.getElementById('generate-script-btn').style.display = 'none';
+            const query = document.getElementById('deep-input-field').value.trim(); if (!query) return;
             
-            const searchBtn = document.getElementById('deep-search-btn');
-            searchBtn.innerHTML = scanAnimatedSvg;
-            searchBtn.disabled = true;
+            document.getElementById('terminal-view').style.display = 'block'; document.getElementById('terminal-view').innerHTML = '';
+            document.getElementById('synthesis-result').style.display = 'none'; document.getElementById('synthesis-result').innerHTML = '';
+            document.getElementById('deep-results-container').style.display = 'none'; document.getElementById('deep-results-container').innerHTML = '';
+            document.getElementById('script-editor-section').style.display = 'none'; document.getElementById('generate-script-btn').style.display = 'none';
+            
+            const searchBtn = document.getElementById('deep-search-btn'); searchBtn.innerHTML = scanAnimatedSvg; searchBtn.disabled = true;
             document.getElementById('run-bg-btn').style.display = 'flex'; 
 
-            localStorage.removeItem('sparkTerminalHtml');
-            renderedLogsCount = 0;
-            currentViewedTaskId = null;
-
+            localStorage.removeItem('sparkTerminalHtml'); renderedLogsCount = 0; currentViewedTaskId = null;
             addTerminalLog("Dispatching task to backend workers...", "var(--accent)");
 
             try {
-                const response = await fetchWithAuth('/api/research/start', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query })
-                });
+                const response = await fetchWithAuth('/api/research/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query }) });
                 const data = await response.json();
-                
                 if (data.task_id) {
-                    addTerminalLog(`Task Assigned ID: ${data.task_id}`, "var(--text-muted)");
-                    currentViewedTaskId = data.task_id;
-                    
-                    activeTasks[data.task_id] = { query: query, time: Date.now() };
-                    localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
-                    
-                    initGlobalPoller();
-                    pollActiveTasks(); 
-                } else {
-                    throw new Error("No Task ID returned from server.");
-                }
+                    addTerminalLog(`Task Assigned ID: ${data.task_id}`, "var(--text-muted)"); currentViewedTaskId = data.task_id;
+                    activeTasks[data.task_id] = { query: query, time: Date.now() }; localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
+                    initGlobalPoller(); pollActiveTasks(); 
+                } else throw new Error("No Task ID returned from server.");
             } catch (err) {
-                if (!navigator.onLine) addTerminalLog("Connection lost. Results safely stored.", "var(--danger)");
-                else addTerminalLog(`FATAL ERROR: ${err.message}`, "var(--danger)");
-                
-                searchBtn.innerHTML = scanStaticSvg;
-                searchBtn.disabled = false;
-                document.getElementById('run-bg-btn').style.display = 'none';
+                if (!navigator.onLine) addTerminalLog("Connection lost. Results safely stored.", "var(--danger)"); else addTerminalLog(`FATAL ERROR: ${err.message}`, "var(--danger)");
+                searchBtn.innerHTML = scanStaticSvg; searchBtn.disabled = false; document.getElementById('run-bg-btn').style.display = 'none';
             }
         }
 
-        // =========================================================================
-        // 📜 HISTORY PAGE LOGIC
-        // =========================================================================
         async function loadHistory() {
-            const container = document.getElementById('history-container');
-            container.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="spinner"></div></div>';
-            
+            const container = document.getElementById('history-container'); container.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="spinner"></div></div>';
             try {
-                const response = await fetchWithAuth('/api/history');
-                const data = await response.json();
-                
-                container.innerHTML = '';
-                if (!data.history || data.history.length === 0) {
-                    container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">No history found.</p>';
-                    return;
-                }
-
+                const response = await fetchWithAuth('/api/history'); const data = await response.json(); container.innerHTML = '';
+                if (!data.history || data.history.length === 0) return container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">No history found.</p>';
                 data.history.forEach(item => {
                     const date = new Date(item.created_at).toLocaleString();
                     let statusColor = item.status === 'complete' ? 'var(--success)' : (item.status === 'failed' ? 'var(--danger)' : 'var(--warning)');
                     let statusText = item.status === 'processing' ? 'IN PROGRESS (Live)' : item.status.toUpperCase();
-                    
-                    container.innerHTML += `
-                    <div class="search-result" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <div class="url" style="color: ${statusColor}; font-weight:bold; margin-bottom:4px;">STATUS: ${statusText}</div>
-                            <div class="title" style="font-size: 1.1rem; color:var(--text-primary)">${item.query}</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">${date}</div>
-                        </div>
-                        <button class="btn" onclick="openHistoryTask('${item.task_id}', '${item.query.replace(/'/g, "\\'")}')">Open</button>
-                    </div>`;
+                    container.innerHTML += `<div class="search-result" style="display:flex; justify-content:space-between; align-items:center;"><div><div class="url" style="color: ${statusColor}; font-weight:bold; margin-bottom:4px;">STATUS: ${statusText}</div><div class="title" style="font-size: 1.1rem; color:var(--text-primary)">${item.query}</div><div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">${date}</div></div><button class="btn" onclick="openHistoryTask('${item.task_id}', '${item.query.replace(/'/g, "\\'")}')">Open</button></div>`;
                 });
-            } catch (err) {
-                container.innerHTML = `<p style="color:var(--danger);">Error loading history: ${err.message}</p>`;
-            }
+            } catch (err) { container.innerHTML = `<p style="color:var(--danger);">Error loading history: ${err.message}</p>`; }
         }
 
         async function openHistoryTask(taskId, query) {
-            document.getElementById('deep-input-field').value = query;
-            switchPage('page-deep-search'); 
-            
-            // UI Reset
-            document.getElementById('terminal-view').style.display = 'block';
-            document.getElementById('terminal-view').innerHTML = '';
-            document.getElementById('synthesis-result').style.display = 'none';
-            document.getElementById('synthesis-result').innerHTML = '';
-            document.getElementById('deep-results-container').style.display = 'none';
-            document.getElementById('deep-results-container').innerHTML = '';
-            document.getElementById('script-editor-section').style.display = 'none';
-            document.getElementById('generate-script-btn').style.display = 'none';
-
-            const searchBtn = document.getElementById('deep-search-btn');
-            searchBtn.innerHTML = scanAnimatedSvg;
-            searchBtn.disabled = true;
-            document.getElementById('run-bg-btn').style.display = 'none';
-            
-            renderedLogsCount = 0;
-            currentViewedTaskId = taskId;
-            
+            document.getElementById('deep-input-field').value = query; switchPage('page-deep-search'); 
+            document.getElementById('terminal-view').style.display = 'block'; document.getElementById('terminal-view').innerHTML = '';
+            document.getElementById('synthesis-result').style.display = 'none'; document.getElementById('synthesis-result').innerHTML = '';
+            document.getElementById('deep-results-container').style.display = 'none'; document.getElementById('deep-results-container').innerHTML = '';
+            document.getElementById('script-editor-section').style.display = 'none'; document.getElementById('generate-script-btn').style.display = 'none';
+            const searchBtn = document.getElementById('deep-search-btn'); searchBtn.innerHTML = scanAnimatedSvg; searchBtn.disabled = true; document.getElementById('run-bg-btn').style.display = 'none';
+            renderedLogsCount = 0; currentViewedTaskId = taskId;
             addTerminalLog(`Fetching Historical Data for Task ID: ${taskId}...`, "var(--accent)");
-            
             try {
                 const response = await fetchWithAuth(`/api/research/status/${taskId}`);
-                if (!response.ok) throw new Error("Task data not found on server.");
-                const data = await response.json();
-
+                if (!response.ok) throw new Error("Task data not found on server."); const data = await response.json();
                 updateDeepSearchUI(data);
-
                 if (data.status === 'processing' && !activeTasks[taskId]) {
-                    activeTasks[taskId] = { query: query, time: Date.now() };
-                    localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks));
-                    updateActiveTasksUI();
-                    document.getElementById('run-bg-btn').style.display = 'flex';
+                    activeTasks[taskId] = { query: query, time: Date.now() }; localStorage.setItem('sparkActiveTasks', JSON.stringify(activeTasks)); updateActiveTasksUI(); document.getElementById('run-bg-btn').style.display = 'flex';
                 }
-            } catch (err) {
-                addTerminalLog(`❌ Fetch Error: ${err.message}`, "var(--danger)");
-                searchBtn.innerHTML = scanStaticSvg;
-                searchBtn.disabled = false;
-            }
+            } catch (err) { addTerminalLog(`❌ Fetch Error: ${err.message}`, "var(--danger)"); searchBtn.innerHTML = scanStaticSvg; searchBtn.disabled = false; }
         }
 
         // =========================================================================
-        // ⚡ RENDERING & SCRIPT GEN (ULTIMATE BULLETPROOF FALLBACK)
+        // ⚡ RENDERING (ARRAY UNWRAPPING FIXED)
         // =========================================================================
 
         function renderSynthesis(jsonData) {
@@ -997,23 +800,18 @@
 
             if (!jsonData) {
                 synthResult.innerHTML = '<p style="color:var(--text-muted);">No report data available.</p>';
-                synthResult.style.display = 'block';
-                return;
+                synthResult.style.display = 'block'; return;
             }
 
-            // Fallback 1: If it's just a raw text string
-            if (typeof jsonData === 'string') {
-                html += `<h3 style="color:var(--accent); margin-bottom:15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">AI Synthesis Report</h3>`;
-                html += `<div style="color:var(--text-primary); font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${jsonData}</div>`;
-                synthResult.innerHTML = html;
-                synthResult.style.display = 'block';
-                currentResearchData = jsonData;
-                document.getElementById('generate-script-btn').style.display = 'flex';
-                return;
-            }
-
+            // ⚡ FIX: Unwrap Arrays Immediately!
+            if (Array.isArray(jsonData)) jsonData = jsonData[0] || {};
+            
             let loreData = jsonData.lore_engine || jsonData.lore;
+            if(Array.isArray(loreData)) loreData = loreData[0]; // Extra safety
+
             let conflictData = jsonData.conflict_engine || jsonData.conflicts;
+            if(Array.isArray(conflictData)) conflictData = conflictData[0]; // Extra safety
+            
             let renderedSomething = false;
 
             // --- LORE ENGINE ---
@@ -1046,7 +844,6 @@
                     html += `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 6px; color: var(--danger); margin-bottom: 20px;"><strong style="display:block; margin-bottom:5px;">⚠️ AI Error:</strong> <span style="font-family: monospace; font-size: 0.85rem;">${conflictData.error}</span></div>`;
                     hasFormattedData = true;
                 } else {
-                    // Consensus Check
                     if (conflictData.core_synthesis) {
                         let consensus = conflictData.core_synthesis.scientific_consensus || conflictData.core_synthesis.consensus;
                         let alternative = conflictData.core_synthesis.mythological_and_fringe_claims || conflictData.core_synthesis.alternative;
@@ -1054,7 +851,6 @@
                         if(alternative) { html += `<div style="margin-bottom: 20px;"><h4 style="color:var(--danger); margin-bottom:5px;">Alternative Claims</h4><p style="color:var(--text-primary); font-size:0.95rem; line-height: 1.6;">${alternative}</p></div>`; hasFormattedData = true; }
                     }
                     
-                    // Theories/Debate Check
                     let theories = conflictData.theory_conflict_engine || conflictData.theories || conflictData.conflicts;
                     if (theories && Array.isArray(theories) && theories.length > 0) {
                         html += `<h4 style="color:var(--accent); margin-bottom:10px; margin-top:20px;">⚡ Key Conflicts Detected</h4>`;
@@ -1069,7 +865,6 @@
                     }
                 }
 
-                // If nothing matched the expected format, dump it raw!
                 if (!hasFormattedData) {
                     html += `<div style="background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 6px; color:var(--text-primary); font-size: 0.85rem; white-space: pre-wrap; font-family: monospace; border: 1px solid var(--border-color); overflow-x: auto;">${JSON.stringify(conflictData, null, 2)}</div>`;
                 }
@@ -1101,20 +896,17 @@
         async function generateScriptFromData() {
             const query = document.getElementById('deep-input-field').value.trim() || "Research Topic";
             const btn = document.getElementById('generate-script-btn');
-            
-            const originalBtnHtml = `<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;margin-right:8px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Write Script by AI`;
+            const originalBtnHtml = btn.innerHTML;
             
             btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;margin-right:8px;"></div> Drafting Thrilling Script...`;
             btn.disabled = true;
 
             try {
                 addTerminalLog("AI Script Writer is drafting the narrative...", "var(--accent)", true);
-                
                 const response = await fetchWithAuth('/api/generate-script', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ query: query, research_data: currentResearchData })
                 });
-                
                 if (!response.ok) throw new Error(`Server Error (${response.status})`);
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
@@ -1124,11 +916,9 @@
                 btn.style.display = 'none'; 
                 addTerminalLog("✅ AI Script Writer finished drafting the narrative.", "var(--success)");
             } catch (err) {
-                console.error("Script Error:", err);
                 alert("Error generating script: " + err.message);
                 addTerminalLog(`❌ Script Error: ${err.message}`, "var(--danger)");
-                btn.innerHTML = originalBtnHtml;
-                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml; btn.disabled = false;
             }
         }
 
@@ -1136,7 +926,6 @@
             const finalScript = document.getElementById('final-script-box').value.trim();
             const query = document.getElementById('deep-input-field').value.trim();
             const orientation = document.getElementById('video-orientation').value;
-            
             if (!finalScript) return alert("Script is empty!");
 
             try {
@@ -1146,46 +935,33 @@
                     body: JSON.stringify({ script_text: finalScript, topic: query, orientation: orientation })
                 });
                 const data = await response.json();
-                
                 if (response.ok && data.status === "success") {
                     addTerminalLog(`✅ Mission Accomplished! Task ID: ${data.task_id}`, "var(--success)");
-                    addTerminalLog(`Vidspark API Message: ${data.message}`, "var(--text-primary)");
                     alert("Script successfully sent to your Vidspark App!");
                 } else {
                     addTerminalLog(`❌ API Error: ${data.error}`, "var(--danger)");
                     alert("Failed to send script: " + data.error);
                 }
-            } catch (err) {
-                addTerminalLog("Failed to dispatch script. Network issue.", "var(--danger)");
-            }
+            } catch (err) { addTerminalLog("Failed to dispatch script. Network issue.", "var(--danger)"); }
         }
 
         async function openArticleView(url) {
             const overlay = document.getElementById('article-overlay');
             const contentDiv = document.getElementById('article-pro-content');
             document.getElementById('article-source-url').innerText = `${url}`;
-            overlay.style.display = 'flex';
-            history.pushState({ modal: 'article' }, "", `#article`);
-
+            overlay.style.display = 'flex'; history.pushState({ modal: 'article' }, "", `#article`);
             contentDiv.innerHTML = `<div style="text-align:center; padding: 60px; color:var(--text-secondary)"><div class="spinner" style="margin: 0 auto 15px auto;"></div>Bypassing firewalls & extracting content...</div>`;
 
             try {
                 let data;
-                if (extractionCache[url]) {
-                    data = extractionCache[url];
-                } else {
-                    const response = await fetchWithAuth('/api/extract', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url })
-                    });
+                if (extractionCache[url]) data = extractionCache[url];
+                else {
+                    const response = await fetchWithAuth('/api/extract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url }) });
                     data = await response.json();
                     if(!data.error) extractionCache[url] = data;
                 }
 
-                if(data.error) {
-                    contentDiv.innerHTML = `<h3 style="color:var(--danger)">Extraction Failed</h3><p>${data.error}</p>`;
-                    return;
-                }
-
+                if(data.error) { contentDiv.innerHTML = `<h3 style="color:var(--danger)">Extraction Failed</h3><p>${data.error}</p>`; return; }
                 if(data.images || data.videos) processExtractedMedia(data.images, data.videos);
 
                 let html = ``;
@@ -1195,29 +971,17 @@
                     else html += `<iframe class="embedded-media" style="aspect-ratio: 16/9;" src="${v}" frameborder="0" allowfullscreen></iframe>`;
                 }
 
-                let paragraphs = data.text.split('<br><br>');
-                let imgIndex = 0;
+                let paragraphs = data.text.split('<br><br>'); let imgIndex = 0;
                 paragraphs.forEach((p, i) => {
                     if(p.trim().length > 0) html += `<p>${p}</p>`;
-                    if (i > 0 && i % 2 === 0 && data.images && imgIndex < data.images.length) {
-                        html += `<img src="${data.images[imgIndex]}" class="embedded-media" loading="lazy">`;
-                        imgIndex++;
-                    }
+                    if (i > 0 && i % 2 === 0 && data.images && imgIndex < data.images.length) { html += `<img src="${data.images[imgIndex]}" class="embedded-media" loading="lazy">`; imgIndex++; }
                 });
                 contentDiv.innerHTML = html;
-            } catch(err) {
-                contentDiv.innerHTML = `<h3 style="color:var(--danger)">Network Error</h3><p>${err.message}</p>`;
-            }
+            } catch(err) { contentDiv.innerHTML = `<h3 style="color:var(--danger)">Network Error</h3><p>${err.message}</p>`; }
         }
 
-        window.addEventListener('popstate', (e) => {
-            if (!e.state || e.state.modal !== 'article') document.getElementById('article-overlay').style.display = 'none';
-        });
-
-        function closeArticleView() {
-            document.getElementById('article-overlay').style.display = 'none';
-            if(history.state && history.state.modal === 'article') history.back();
-        }
+        window.addEventListener('popstate', (e) => { if (!e.state || e.state.modal !== 'article') document.getElementById('article-overlay').style.display = 'none'; });
+        function closeArticleView() { document.getElementById('article-overlay').style.display = 'none'; if(history.state && history.state.modal === 'article') history.back(); }
 
         // =========================================================================
         // ⚡ BACKGROUND Media Loading Logic
@@ -1227,22 +991,19 @@
             const lowerUrl = url.toLowerCase();
             if (lowerUrl.includes('/user/') && (lowerUrl.includes('48x48') || lowerUrl.includes('96x96') || lowerUrl.includes('32x32'))) return true;
             if (lowerUrl.match(/_(32|48|64|96)x\d+\.(jpg|png|webp|gif)$/i)) return true;
-            if (lowerUrl.includes('avatar') || lowerUrl.includes('profile')) return true;
-            if (lowerUrl.includes('logo') && (lowerUrl.includes('small') || lowerUrl.includes('icon'))) return true;
+            if (lowerUrl.includes('avatar') || lowerUrl.includes('profile') || (lowerUrl.includes('logo') && lowerUrl.includes('icon'))) return true;
             return false;
         }
 
         async function startSequentialMediaLoading() {
             if (isExtractingMedia || mediaProcessedIndex >= pendingMediaUrls.length) return;
             isExtractingMedia = true;
-            
             const statusDiv = document.getElementById('media-status');
             const statusText = document.getElementById('media-status-text');
 
             while (mediaProcessedIndex < pendingMediaUrls.length) {
                 let url = pendingMediaUrls[mediaProcessedIndex];
                 
-                // Show status ONLY if user is currently looking at the Media page
                 if(document.getElementById('page-media').classList.contains('active')) {
                     statusDiv.style.display = 'flex';
                     statusText.innerText = `Extracting visual assets from: ${url.substring(0,35)}...`;
@@ -1252,26 +1013,17 @@
 
                 try {
                     let data;
-                    if(extractionCache[url]) {
-                        data = extractionCache[url];
-                    } else {
-                        const res = await fetchWithAuth('/api/extract', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({url: url})
-                        });
+                    if(extractionCache[url]) data = extractionCache[url];
+                    else {
+                        const res = await fetchWithAuth('/api/extract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({url: url}) });
                         data = await res.json();
                         if(!data.error) extractionCache[url] = data;
                     }
-                    if(data && !data.error) {
-                        processExtractedMedia(data.images, data.videos);
-                    }
-                } catch(e) {
-                    console.error("Media load error for", url);
-                }
+                    if(data && !data.error) processExtractedMedia(data.images, data.videos);
+                } catch(e) { console.error("Media load error for", url); }
                 
                 mediaProcessedIndex++;
-                await new Promise(r => setTimeout(r, 1500)); // Delay so backend doesn't crash
+                await new Promise(r => setTimeout(r, 1500)); 
             }
             
             isExtractingMedia = false;
@@ -1280,27 +1032,9 @@
 
         function processExtractedMedia(images, videos) {
             let addedNew = false;
-            if(images) {
-                images.forEach(url => {
-                    if(!globalMedia.some(m => m.url === url)) {
-                        globalMedia.push({ type: 'image', url: url, isJunk: isJunkMedia(url) });
-                        addedNew = true;
-                    }
-                });
-            }
-            if(videos) {
-                videos.forEach(url => {
-                    if(!globalMedia.some(m => m.url === url)) {
-                        globalMedia.push({ type: 'video', url: url, isJunk: false });
-                        addedNew = true;
-                    }
-                });
-            }
-            
-            // Only force re-render UI if user is actively on Media Page
-            if(addedNew && document.getElementById('page-media').classList.contains('active')) {
-                renderMediaGrid();
-            }
+            if(images) { images.forEach(url => { if(!globalMedia.some(m => m.url === url)) { globalMedia.push({ type: 'image', url: url, isJunk: isJunkMedia(url) }); addedNew = true; } }); }
+            if(videos) { videos.forEach(url => { if(!globalMedia.some(m => m.url === url)) { globalMedia.push({ type: 'video', url: url, isJunk: false }); addedNew = true; } }); }
+            if(addedNew && document.getElementById('page-media').classList.contains('active')) renderMediaGrid();
         }
 
         function toggleJunkMedia() { renderMediaGrid(); }
@@ -1310,50 +1044,28 @@
             const grid = document.getElementById('media-grid');
             const hideJunk = document.getElementById('filter-junk-btn').checked;
             grid.innerHTML = '';
-
             let filteredMedia = globalMedia.filter(m => {
                 if(currentMediaTypeFilter !== 'all' && m.type !== currentMediaTypeFilter) return false;
-                if(hideJunk && m.isJunk) return false;
-                return true;
+                if(hideJunk && m.isJunk) return false; return true;
             });
-
-            if (filteredMedia.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.95rem; grid-column: 1/-1; text-align: center; padding: 20px;">No matching media found.</p>';
-                return;
-            }
+            if (filteredMedia.length === 0) return grid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.95rem; grid-column: 1/-1; text-align: center; padding: 20px;">No matching media found.</p>';
 
             filteredMedia.forEach(m => {
                 const card = document.createElement('div');
                 card.className = `media-card ${m.isJunk ? 'junk-media' : ''}`;
-                let mediaHtml = '';
-                if (m.type === 'image') {
-                    mediaHtml = `<a href="${m.url}" target="_blank"><img src="${m.url}" loading="lazy"></a>`;
-                } else {
-                    if (m.url.includes('.mp4') || m.url.includes('.webm')) {
-                        mediaHtml = `<video controls><source src="${m.url}"></video>`;
-                    } else {
-                        mediaHtml = `<iframe src="${m.url}" style="width:100%; height:130px; border:none;"></iframe>`;
-                    }
-                }
+                let mediaHtml = m.type === 'image' ? `<a href="${m.url}" target="_blank"><img src="${m.url}" loading="lazy"></a>` : (m.url.includes('.mp4') || m.url.includes('.webm') ? `<video controls><source src="${m.url}"></video>` : `<iframe src="${m.url}" style="width:100%; height:130px; border:none;"></iframe>`);
                 card.innerHTML = `<div class="junk-badge">JUNK</div>${mediaHtml}`;
                 grid.appendChild(card);
             });
         }
 
         function executeMediaScrape() {
-            const urlInput = document.getElementById('media-url-input');
-            const url = urlInput.value.trim();
-            if (!url) return;
-            if (!/^(https?:\/\/)/i.test(url)) {
-                alert("Please enter a valid HTTP/HTTPS URL.");
-                return;
-            }
+            const urlInput = document.getElementById('media-url-input'); const url = urlInput.value.trim();
+            if (!url || !/^(https?:\/\/)/i.test(url)) return alert("Please enter a valid HTTP/HTTPS URL.");
             if(!pendingMediaUrls.includes(url)) pendingMediaUrls.push(url);
-            urlInput.value = ''; 
-            startSequentialMediaLoading();
+            urlInput.value = ''; startSequentialMediaLoading();
         }
 
-        // Start Global Poller at boot
         initGlobalPoller();
     </script>
 </body>
