@@ -1,122 +1,139 @@
-from fastapi import FastAPI, Request, HTTPException, Depends, Security
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import FileResponse, JSONResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
-import httpx
 import os
 import sys
+from fastapi import FastAPI, Request, HTTPException, Security, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+import httpx  # Async requests के लिए httpx ज्यादा स्टेबल है
 
-app = FastAPI(title="Sparkling Gyan Frontend")
-templates = Jinja2Templates(directory="templates")
-security = HTTPBearer()
+app = FastAPI(title="Sparkling Gyan Frontend", docs_url=None, redoc_url=None)
+
+# ==========================================
+# 📂 DIRECTORY SETUP (Vercel Friendly)
+# ==========================================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+
+# अगर तुम्हारे पास 'static' फोल्डर है, तो इसे अनकमेंट कर लेना
+# app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
 # ==========================================
 # 🔐 SECRETS CONFIGURATION
 # ==========================================
-BACKEND_URL = os.getenv("BACKEND_URL", "https://diwash-barla-spark-search.hf.space")
+MY_API_KEY = os.getenv("SS_API_KEY", "my_custom_spark_key")
+BACKEND_URL = os.getenv("BACKEND_URL", "https://diwash-barla-spark-search.hf.space").rstrip("/")
 HF_TOKEN = os.getenv("API_SECRET_TOKEN", "sparkling_secret_123")
-FRONTEND_CUSTOM_API_KEY = os.getenv("SS_API_KEY", "my_custom_spark_key")
 
-# ==========================================
-# 🚨 SMART EXCEPTION LOGGER
-# यह हर एरर को तुम्हारे टर्मिनल में डिटेल के साथ प्रिंट करेगा
-# ==========================================
-@app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
-    print(f"🔴 HTTP ERROR {exc.status_code} | Path: {request.url.path} | Reason: {exc.detail}", file=sys.stderr)
-    return JSONResponse(status_code=exc.status_code, content={"error": exc.detail})
+# Frontend Bearer token भेजता है, इसलिए HTTPBearer का यूज़ करना ज़रूरी है
+security = HTTPBearer()
 
-# ==========================================
-# 🛡️ SECURITY LAYER
-# ==========================================
-def verify_frontend_api_key(credentials: HTTPAuthorizationCredentials = Security(security)):
-    if credentials.credentials != FRONTEND_CUSTOM_API_KEY:
-        print(f"🔒 AUTH FAIL: Kisi ne galat API key try ki: '{credentials.credentials[:5]}...'", file=sys.stderr)
-        raise HTTPException(status_code=403, detail="Invalid SS_API_KEY. Access Denied.")
+async def get_api_key(credentials: HTTPAuthorizationCredentials = Security(security)):
+    if credentials.credentials != MY_API_KEY:
+        print(f"🔒 AUTH FAIL: Invalid API Key Try: '{credentials.credentials[:5]}...'", file=sys.stderr)
+        raise HTTPException(status_code=403, detail="Invalid API Key. Access Denied!")
     return credentials.credentials
 
 # ==========================================
-# 🚀 ELITE PROXY HELPER
-# सारे राउट्स का हैवी काम यह अकेला फंक्शन करेगा और बैकएंड एरर्स को भी प्रिंट करेगा
+# 🚀 VERCEL-SAFE PROXY HELPER (10s Timeout)
 # ==========================================
-async def forward_to_backend(method: str, endpoint: str, payload: dict = None, timeout: float = 60.0):
+async def forward_to_backend(method: str, endpoint: str, payload: dict = None, params: dict = None):
     url = f"{BACKEND_URL}{endpoint}"
-    headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+    headers = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
     
     try:
-        async with httpx.AsyncClient() as client:
+        # Vercel के Serverless फंक्शन 10-15s में मर जाते हैं, इसलिए timeout=10.0 रखा है
+        async with httpx.AsyncClient(timeout=10.0) as client:
             if method == "POST":
-                response = await client.post(url, json=payload, headers=headers, timeout=timeout)
+                response = await client.post(url, json=payload, headers=headers)
             else:
-                response = await client.get(url, headers=headers, timeout=timeout)
+                response = await client.get(url, headers=headers, params=params)
                 
-            # अगर बैकएंड (HF Space) से कोई एरर आता है
             if response.status_code >= 400:
-                error_body = response.text
-                print(f"❌ BACKEND REJECTED ({response.status_code}) on {endpoint} | HF Response: {error_body}", file=sys.stderr)
-                raise HTTPException(status_code=response.status_code, detail=f"Backend Error: {error_body}")
+                print(f"❌ BACKEND REJECTED ({response.status_code}) on {endpoint} | HF Response: {response.text}", file=sys.stderr)
+                # 404 को इग्नोर करने के लिए ताकि फ्रंटएंड उसे हैंडल कर सके (जैसे Task Not Found)
+                if response.status_code == 404:
+                    raise HTTPException(status_code=404, detail="Task not found or expired on backend.")
+                raise HTTPException(status_code=response.status_code, detail=f"Backend Error: {response.text}")
                 
             return response.json()
             
-    except httpx.RequestError as e:
-        print(f"💥 CONNECTION CRASH on {endpoint} | Error: {str(e)}", file=sys.stderr)
-        raise HTTPException(status_code=500, detail=f"Backend is unreachable: {str(e)}")
+    except httpx.ReadTimeout:
+        # अगर 10 सेकंड से ज्यादा लगा, तो Vercel क्रैश न हो, बल्कि ग्रेसफुली यह एरर दे
+        raise HTTPException(status_code=504, detail="Task is taking too long. Polling architecture is required on backend.")
+    except Exception as e:
+        print(f"💥 PROXY ERROR on {endpoint} | Error: {str(e)}", file=sys.stderr)
+        raise HTTPException(status_code=500, detail=f"Proxy Error: {str(e)}")
 
 # ==========================================
 # 🌐 UI & PWA ROUTES
 # ==========================================
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
-@app.get("/manifest.json")
-async def get_manifest():
-    return FileResponse("manifest.json")
-
-@app.get("/service-worker.js")
-async def get_sw():
-    return FileResponse("service-worker.js")
-
-@app.get("/docs-ui")
+@app.get("/docs-ui", response_class=HTMLResponse)
 async def read_docs(request: Request):
     return templates.TemplateResponse(request=request, name="docs.html")
 
+@app.get("/manifest.json")
+async def serve_manifest():
+    return FileResponse(os.path.join(BASE_DIR, "manifest.json"), media_type="application/manifest+json")
+
+@app.get("/service-worker.js")
+async def serve_sw():
+    return FileResponse(os.path.join(BASE_DIR, "service-worker.js"), media_type="application/javascript")
+
 # ==========================================
-# ⚡ PROXY API ROUTES
+# ⚡ SPARKLING GYAN API ROUTES (Polling Ready)
 # ==========================================
-@app.post("/api/fast-search", dependencies=[Depends(verify_frontend_api_key)])
-async def fast_search(request: Request):
-    return await forward_to_backend("POST", "/api/fast-search", await request.json(), timeout=30.0)
 
-@app.post("/api/deep-search", dependencies=[Depends(verify_frontend_api_key)])
-async def deep_search(request: Request):
-    return await forward_to_backend("POST", "/api/deep-search", await request.json(), timeout=60.0)
+@app.post("/api/fast-search")
+async def fast_search(request: Request, api_key: str = Depends(get_api_key)):
+    payload = await request.json()
+    return await forward_to_backend("POST", "/api/fast-search", payload=payload)
 
-@app.post("/api/extract", dependencies=[Depends(verify_frontend_api_key)])
-async def extract(request: Request):
-    return await forward_to_backend("POST", "/api/extract", await request.json(), timeout=60.0)
+@app.post("/api/deep-search")
+async def deep_search(request: Request, api_key: str = Depends(get_api_key)):
+    payload = await request.json()
+    return await forward_to_backend("POST", "/api/deep-search", payload=payload)
 
-@app.post("/api/synthesize", dependencies=[Depends(verify_frontend_api_key)])
-async def synthesize(request: Request):
-    return await forward_to_backend("POST", "/api/synthesize", await request.json(), timeout=180.0)
+@app.post("/api/extract")
+async def extract(request: Request, api_key: str = Depends(get_api_key)):
+    payload = await request.json()
+    return await forward_to_backend("POST", "/api/extract", payload=payload)
 
-@app.post("/api/research/start", dependencies=[Depends(verify_frontend_api_key)])
-async def research_start(request: Request):
-    return await forward_to_backend("POST", "/api/research/start", await request.json(), timeout=30.0)
+@app.post("/api/research/start")
+async def research_start(request: Request, api_key: str = Depends(get_api_key)):
+    payload = await request.json()
+    return await forward_to_backend("POST", "/api/research/start", payload=payload)
 
-@app.get("/api/research/status/{task_id}", dependencies=[Depends(verify_frontend_api_key)])
-async def research_status(task_id: str):
-    return await forward_to_backend("GET", f"/api/research/status/{task_id}", timeout=30.0)
+@app.get("/api/research/status/{task_id}")
+async def research_status(task_id: str, api_key: str = Depends(get_api_key)):
+    return await forward_to_backend("GET", f"/api/research/status/{task_id}")
 
-@app.get("/api/history", dependencies=[Depends(verify_frontend_api_key)])
-async def get_history():
-    return await forward_to_backend("GET", "/api/history", timeout=30.0)
+@app.get("/api/history")
+async def get_history(q: str = None, api_key: str = Depends(get_api_key)):
+    # Params सपोर्ट ताकि सर्च क्वेरी बैकएंड तक जा सके
+    params = {"q": q} if q else {}
+    try:
+        return await forward_to_backend("GET", "/api/history", params=params)
+    except:
+        return [] # एरर आने पर UI क्रैश न हो, खाली एरे लौटाये
 
-@app.post("/api/generate-script", dependencies=[Depends(verify_frontend_api_key)])
-async def generate_script(request: Request):
-    return await forward_to_backend("POST", "/api/generate-script", await request.json(), timeout=120.0)
+@app.post("/api/generate-script")
+async def generate_script(request: Request, api_key: str = Depends(get_api_key)):
+    # ⚠️ ध्यान दें: अगर स्क्रिप्ट जनरेशन में 10 सेकंड से ज्यादा लगता है, 
+    # तो बैकएंड (HF) को भी /api/generate-script/start और status वाला पोलिंग लॉजिक इस्तेमाल करना होगा।
+    payload = await request.json()
+    return await forward_to_backend("POST", "/api/generate-script", payload=payload)
 
-@app.post("/api/dispatch-to-creator", dependencies=[Depends(verify_frontend_api_key)])
-async def dispatch_to_creator(request: Request):
-    return await forward_to_backend("POST", "/api/dispatch-to-creator", await request.json(), timeout=60.0)
+@app.post("/api/dispatch-to-creator")
+async def dispatch_to_creator(request: Request, api_key: str = Depends(get_api_key)):
+    payload = await request.json()
+    return await forward_to_backend("POST", "/api/dispatch-to-creator", payload=payload)
+
+@app.post("/api/synthesize")
+async def synthesize(request: Request, api_key: str = Depends(get_api_key)):
+    payload = await request.json()
+    return await forward_to_backend("POST", "/api/synthesize", payload=payload)
