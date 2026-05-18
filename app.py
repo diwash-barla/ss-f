@@ -35,15 +35,15 @@ async def get_api_key(credentials: HTTPAuthorizationCredentials = Security(secur
     return credentials.credentials
 
 # ==========================================
-# 🚀 VERCEL-SAFE PROXY HELPER (10s Timeout)
+# 🚀 VERCEL-SAFE PROXY HELPER (10s Timeout & Redirect Fix)
 # ==========================================
 async def forward_to_backend(method: str, endpoint: str, payload: dict = None, params: dict = None):
     url = f"{BACKEND_URL}{endpoint}"
     headers = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
     
     try:
-        # Vercel के Serverless फंक्शन 10-15s में मर जाते हैं, इसलिए timeout=10.0 रखा है
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        # ⚠️ follow_redirects=True बहुत ज़रूरी है HF Spaces के लिए!
+        async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
             if method == "POST":
                 response = await client.post(url, json=payload, headers=headers)
             else:
@@ -51,15 +51,18 @@ async def forward_to_backend(method: str, endpoint: str, payload: dict = None, p
                 
             if response.status_code >= 400:
                 print(f"❌ BACKEND REJECTED ({response.status_code}) on {endpoint} | HF Response: {response.text}", file=sys.stderr)
-                # 404 को इग्नोर करने के लिए ताकि फ्रंटएंड उसे हैंडल कर सके (जैसे Task Not Found)
                 if response.status_code == 404:
                     raise HTTPException(status_code=404, detail="Task not found or expired on backend.")
                 raise HTTPException(status_code=response.status_code, detail=f"Backend Error: {response.text}")
-                
-            return response.json()
             
+            # JSON पार्सिंग एरर से बचने के लिए सेफ-गार्ड
+            try:
+                return response.json()
+            except ValueError:
+                print(f"⚠️ NON-JSON RESPONSE on {endpoint} | Status: {response.status_code} | Body: {response.text}", file=sys.stderr)
+                raise HTTPException(status_code=502, detail="Backend returned invalid data. HF Space might be sleeping or returning HTML.")
+                
     except httpx.ReadTimeout:
-        # अगर 10 सेकंड से ज्यादा लगा, तो Vercel क्रैश न हो, बल्कि ग्रेसफुली यह एरर दे
         raise HTTPException(status_code=504, detail="Task is taking too long. Polling architecture is required on backend.")
     except Exception as e:
         print(f"💥 PROXY ERROR on {endpoint} | Error: {str(e)}", file=sys.stderr)
