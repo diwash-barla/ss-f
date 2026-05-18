@@ -35,38 +35,48 @@ async def get_api_key(credentials: HTTPAuthorizationCredentials = Security(secur
     return credentials.credentials
 
 # ==========================================
-# 🚀 VERCEL-SAFE PROXY HELPER (10s Timeout & Redirect Fix)
+# 🚀 VERCEL-SAFE PROXY HELPER (Ultimate Error Catcher)
 # ==========================================
 async def forward_to_backend(method: str, endpoint: str, payload: dict = None, params: dict = None):
     url = f"{BACKEND_URL}{endpoint}"
     headers = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
     
     try:
-        # ⚠️ follow_redirects=True बहुत ज़रूरी है HF Spaces के लिए!
-        async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+        # Timeout को 9.0s रखा है ताकि Vercel (10s limit) से पहले हमारा कोड ग्रेसफुली एरर दे सके
+        async with httpx.AsyncClient(timeout=9.0, follow_redirects=True) as client:
             if method == "POST":
                 response = await client.post(url, json=payload, headers=headers)
             else:
                 response = await client.get(url, headers=headers, params=params)
                 
             if response.status_code >= 400:
-                print(f"❌ BACKEND REJECTED ({response.status_code}) on {endpoint} | HF Response: {response.text}", file=sys.stderr)
+                error_text = response.text
+                print(f"❌ BACKEND REJECTED ({response.status_code}) on {endpoint} | HF Response: {error_text}", file=sys.stderr)
                 if response.status_code == 404:
                     raise HTTPException(status_code=404, detail="Task not found or expired on backend.")
-                raise HTTPException(status_code=response.status_code, detail=f"Backend Error: {response.text}")
+                raise HTTPException(status_code=response.status_code, detail=f"Backend Error: {error_text}")
             
-            # JSON पार्सिंग एरर से बचने के लिए सेफ-गार्ड
             try:
                 return response.json()
             except ValueError:
-                print(f"⚠️ NON-JSON RESPONSE on {endpoint} | Status: {response.status_code} | Body: {response.text}", file=sys.stderr)
-                raise HTTPException(status_code=502, detail="Backend returned invalid data. HF Space might be sleeping or returning HTML.")
-                
-    except httpx.ReadTimeout:
-        raise HTTPException(status_code=504, detail="Task is taking too long. Polling architecture is required on backend.")
+                print(f"⚠️ NON-JSON RESPONSE on {endpoint} | Status: {response.status_code}", file=sys.stderr)
+                raise HTTPException(status_code=502, detail="Backend returned HTML. HF Space might be sleeping/paused.")
+
+    except httpx.TimeoutException as e:
+        # TimeoutException सभी तरह के टाइमआउट (Read, Connect, Write) को कैच कर लेगा
+        print(f"⏱️ TIMEOUT ERROR on {endpoint} | ErrorType: {type(e).__name__}", file=sys.stderr)
+        raise HTTPException(
+            status_code=504, 
+            detail="Hugging Face Space is taking too long to respond. It might be waking up from sleep. Please try again in 1-2 minutes."
+        )
+    except httpx.RequestError as e:
+        # नेटवर्क से जुड़ी कोई भी दिक्कत (DNS, Connection Refused etc.)
+        print(f"🔌 NETWORK ERROR on {endpoint} | ErrorType: {type(e).__name__} | Details: {str(e)}", file=sys.stderr)
+        raise HTTPException(status_code=503, detail=f"Cannot connect to Hugging Face Backend: {type(e).__name__}")
     except Exception as e:
-        print(f"💥 PROXY ERROR on {endpoint} | Error: {str(e)}", file=sys.stderr)
-        raise HTTPException(status_code=500, detail=f"Proxy Error: {str(e)}")
+        # कोई भी अनजाना एरर
+        print(f"💥 UNEXPECTED PROXY ERROR on {endpoint} | ErrorType: {type(e).__name__} | Details: {str(e)}", file=sys.stderr)
+        raise HTTPException(status_code=500, detail=f"Unexpected Server Error: {str(e)}")
 
 # ==========================================
 # 🌐 UI & PWA ROUTES
